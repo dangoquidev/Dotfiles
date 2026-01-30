@@ -1,0 +1,144 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "spacing": 0,
+
+    "modules-left": [
+        "image",
+        "hyprland/workspaces",
+        "cpu",
+        "memory",
+        "temperature",
+        "mpris"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "custom/cava",
+        "tray",
+        "network",
+        "wireplumber",
+        "clock",
+        "battery",
+        "custom/power"
+    ],
+    "custom/cava": {
+        "exec": "/home/dango/Dotfiles/config/waybar/scripts/cava.sh",
+        "exec-if": "pgrep -x spotify",
+        "restart-interval": 5,
+        "tooltip": false
+    },
+    "image": {
+        "path": "/home/dango/Downloads/nagisa.jpg",
+        "size": 24,
+        "interval": 0,
+        "tooltip": false
+    },
+
+    "hyprland/workspaces": {
+        "all-outputs": true,
+        "format": "{id}",
+        "on-click": "activate",
+        "sort-by-number": true
+    },
+
+    "cpu": {
+        "interval": 5,
+        "format": " {usage}%", 
+        "tooltip-format": "CPU: {usage}%\n{avg_frequency} GHz"
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": " {percentage}%",
+        "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G"
+    },
+
+    "temperature": {
+        "interval": 5,
+        "thermal-zone": 0,
+        "critical-threshold": 80,
+        "format": " {temperatureC}°C",
+        "format-critical": " {temperatureC}°C",
+        "tooltip-format": "Temperature: {temperatureC}°C"
+    },
+    "mpris": {
+        "format": "{status_icon} | {dynamic}",
+        "interval": 1,
+        "dynamic-len": 20,
+        "status-icons": {
+            "playing": "▶",
+            "paused": "⏸",
+            "stopped": ""
+        },
+        "dynamic-order": ["title", "artist"],
+        "tooltip-format": "{title} - {artist}\n{album}\n{position}/{length}"
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%A %d %B %Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "network": {
+        "interval": 5,
+        "format-wifi": " {essid}",
+        "format-ethernet": " {ifname}",
+        "format-disconnected": "⚠ Disconnected",
+        "tooltip-format-wifi": "Signal: {signalStrength}%\nFrequency: {frequency} GHz\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
+        "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
+        "tooltip-format-disconnected": "No connection",
+        "on-click": "kitty --class floating-term -e bash -c 'echo \"=== Network Stats ===\"; echo; ip -br addr; echo; echo \"=== Bandwidth ===\"; echo; cat /proc/net/dev | head -3; echo; speedtest-cli --simple 2>/dev/null || echo \"Install speedtest-cli for speed test\"; echo; read -p \"Press enter to close...\"'"
+    },
+
+    "battery": {
+        "interval": 10,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "Battery: {capacity}%\nPower: {power:.1f}W\nTime: {time}"
+    },
+
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "tooltip-format": "Brightness: {percent}%",
+        "scroll-step": 5
+    },
+
+    "wireplumber": {
+        "scroll-step": 5,
+        "format": "{icon} {volume}%",
+        "format-muted": " Muted",
+        "format-icons": ["", "", ""],
+        "tooltip-format": "Volume: {volume}%\nNode: {node_name}",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "pavucontrol"
+    },
+
+    "tray": {
+        "icon-size": 18,
+        "spacing": 8
+    },
+
+    "custom/power": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "wlogout"
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "separate-outputs": true,
+        "rewrite": {
+            "": ""
+        },
+        "max-length": 50
+    }
+}

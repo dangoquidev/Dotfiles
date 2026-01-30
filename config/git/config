@@ -1,0 +1,91 @@
+[commit]
+    gpgSign             = true
+
+[core]
+    compression         = 9
+    whitespace          = error
+    preloadindex        = true
+
+[advice]
+    addEmptyPathspec    = false
+    pushnonFastForward  = false
+    statusHints         = false
+
+[url "git@github.com:dangoquidev/"]
+    insteadOf           = "dango:"
+
+[url "git@github.com:"]
+    insteadOf           = "gh:"
+
+[init]
+    defaultBranch       = prod
+
+[status]
+    branch              = true
+    showStash           = true
+    showUntrackedFiles  = all
+
+[diff]
+    context             = 3
+    renames             = copies
+    interHunkContext    = 10
+
+[pager]
+    diff                = diff-so-fancy | $PAGER
+
+[diff-so-fancy]
+    markEmptyLines      = false
+
+[interactive]
+    diffFilter          = diff-so-fancy --patch
+    singlekey           = true
+
+[push]
+    autoSetupRemote     = true
+    default             = current
+    followTags          = true
+
+[pull]
+    default             = current
+
+[rebase]
+    autoStash           = true
+    missingCommitsCheck = warn
+
+[log]
+    abbrevCommit        = true
+    graphColors         = blue,yellow,cyan,magenta,green,red
+
+[branch]
+    sort                = -committerdate
+
+[tag]
+    sort                = -taggerdate
+
+[pager]
+    branch              = false
+    tag                 = false
+
+[color "diff"]
+    meta                = black bold
+    frag                = magenta
+    context             = white
+    whitespace          = yellow reverse
+    old                 = red
+
+[color "decorate"]
+    HEAD                = red
+    branch              = blue
+    tag                 = yellow
+    remoteBranch        = magenta
+
+[color "branch"]
+    current             = magenta
+    local               = default
+    remote              = yellow
+    upstream            = green
+    plain               = blue
+[user]
+	name = Alexandre Pereira De Almeida
+	email = alexandre.pereira-de-almeida@epitech.eu
+	signingkey = 538FF676161FA3BE
