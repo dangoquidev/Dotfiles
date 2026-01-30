@@ -1,0 +1,183 @@
+* {
+    font-family: "JetBrains Mono", "Font Awesome 6 Free";
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: #ffffff;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+}
+
+.modules-left {
+    margin: 8px 0 0 12px;
+}
+
+.modules-center {
+    margin: 8px 0 0 0;
+}
+
+.modules-right {
+    margin: 8px 12px 0 0;
+}
+
+#workspaces {
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    color: #ffffff;
+    background: transparent;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 143, 163, 0.3);
+}
+
+#workspaces button.active {
+    color: #1a1a2a;
+    background: #ff8fa3;
+}
+
+#workspaces button.urgent {
+    background: #ff5577;
+}
+
+#image {
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-right: 8px;
+}
+
+#cpu,
+#memory,
+#temperature,
+#mpris,
+#custom-cava {
+    padding: 0 12px;
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-left: 8px;
+}
+
+#cpu {
+    color: #ffffff;
+}
+
+#memory {
+    color: #ffffff;
+}
+
+#temperature {
+    color: #ffffff;
+}
+
+#temperature.critical {
+    color: #ff5577;
+}
+
+#window {
+    padding: 0 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+}
+
+window#waybar.empty #window {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    min-width: 0;
+    opacity: 0;
+}
+
+#network,
+#battery,
+#clock,
+#wireplumber {
+    padding: 0 12px;
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-left: 8px;
+}
+
+#network.disconnected {
+    color: #666666;
+}
+
+#battery.charging {
+    color: #b8f5c8;
+}
+
+#battery.warning:not(.charging) {
+    color: #ffd1dc;
+}
+
+#battery.critical:not(.charging) {
+    color: #ff5577;
+    animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
+
+#wireplumber.muted {
+    color: #666666;
+}
+
+#custom-power {
+    padding: 0 12px;
+    margin-left: 8px;
+    color: #1a1a2a;
+    background: #ff8fa3;
+    border: 2px solid #ff8fa3;
+}
+
+#custom-power:hover {
+    background: #ffb3c1;
+    border-color: #ffb3c1;
+}
+
+#tray {
+    padding: 0 8px;
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-left: 8px;
+}
+
+#tray menu {
+    background: rgba(26, 26, 42, 0.95);
+    border: 2px solid #ff8fa3;
+    color: #ffffff;
+}
+
+#tray menu menuitem:hover {
+    background: rgba(255, 143, 163, 0.3);
+}
+
+tooltip {
+    background: rgba(26, 26, 42, 0.95);
+    border: 2px solid #ff8fa3;
+}
+
+tooltip label {
+    color: #ffffff;
+}
+
+#custom-cava {
+    color: #b8f5c8; /* Vert Spotify */
+    font-family: monospace;
+    font-size: 12px;
+    padding: 0 5px;
+}

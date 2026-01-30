@@ -1,0 +1,133 @@
+configuration {
+    font: "JetBrain Nerd Font Mono 14";
+    show-icons: true;
+    display-drun: "Launch";
+    drun-display-format: "{name}";
+    disable-history: false;
+    click-to-exit: true;
+}
+
+* {
+    c-accent:  #ffffff;
+    c-txt:     #DDD5C4;
+    c-bg:      #1a1a2a;
+    c-bg2:     #3A372F;
+    c-accent2: #ff8fa3;
+
+    background-color: transparent;
+    text-color:       @c-txt;
+    
+    margin: 0px;
+    padding: 0px;
+}
+
+window {
+    transparency: "real";
+    width: 550px;
+    location: center;
+    anchor: center;
+    fullscreen: false;
+    
+    background-color: @c-bg;
+    border: 3px solid;
+    border-color: @c-accent2;
+    border-radius: 0px;      
+    padding: 10px;
+}
+
+mainbox {
+    enabled: true;
+    spacing: 10px;
+    orientation: vertical;
+    children: [ "inputbar", "listview" ];
+    background-color: transparent;
+}
+
+inputbar {
+    enabled: true;
+    spacing: 10px;
+    margin: 10px 25px 10px 25px;
+    padding: 10px;
+    
+    background-color: @c-bg;
+    border: 2px solid;
+    border-color: @c-accent2;
+    border-radius: 5px;
+    
+    children: [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled: true;
+    text-color: @c-accent;
+}
+
+entry {
+    enabled: true;
+    text-color: @c-accent;
+    cursor: text;
+    placeholder: "Rechercher...";
+    placeholder-color: @c-bg2;
+}
+
+listview {
+    enabled: true;
+    columns: 1;
+    lines: 8;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    
+    spacing: 5px;
+    margin: 5px;
+    background-color: transparent;
+}
+
+element {
+    enabled: true;
+    spacing: 10px;
+    margin: 0px;
+    padding: 10px;
+    border: 0px solid;
+    border-radius: 5px;
+    background-color: transparent;
+    text-color: @c-txt;
+    cursor: pointer;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    highlight: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 24px;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+element selected.normal {
+    background-color: @c-bg;
+    border: 1px solid;
+    border-color: @c-accent;
+    text-color: @c-txt;
+}
+
+element normal.active {
+    text-color: @c-accent;
+}
+element selected.active {
+    text-color: @c-accent;
+    border: 1px solid;
+    border-color: @c-accent2;
+}
