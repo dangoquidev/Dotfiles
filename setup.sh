@@ -17,7 +17,7 @@ if ! command -v whiptail &> /dev/null; then
 fi
 
 CHOICE=$(whiptail --title "Dotfiles Manager" --menu "What do you want to do?" 15 60 2 \
-"1" "Install configurations (Symlinks + Apps)" \
+"1" "Install configurations" \
 "2" "Uninstall and restore backups" 3>&1 1>&2 2>&3)
 
 exitstatus=$?
