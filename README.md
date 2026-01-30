@@ -75,10 +75,6 @@ cd Dotfiles
 
 The installer features a beautiful TUI interface:
 
-<table>
-<tr>
-<td width="50%">
-
 **Step 1:** Run the setup script
 ```bash
 ./setup.sh
