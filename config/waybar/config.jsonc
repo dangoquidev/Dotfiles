@@ -5,7 +5,6 @@
     "spacing": 0,
 
     "modules-left": [
-        "image",
         "hyprland/workspaces",
         "cpu",
         "memory",
@@ -30,13 +29,6 @@
         "restart-interval": 5,
         "tooltip": false
     },
-    "image": {
-        "path": "/home/dango/Downloads/nagisa.jpg",
-        "size": 24,
-        "interval": 0,
-        "tooltip": false
-    },
-
     "hyprland/workspaces": {
         "all-outputs": true,
         "format": "{id}",
@@ -84,9 +76,9 @@
 
     "network": {
         "interval": 5,
-        "format-wifi": " {essid}",
-        "format-ethernet": " {ifname}",
-        "format-disconnected": "⚠ Disconnected",
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  {ifname}",
+        "format-disconnected": "⚠  Disconnected",
         "tooltip-format-wifi": "Signal: {signalStrength}%\nFrequency: {frequency} GHz\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
         "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
         "tooltip-format-disconnected": "No connection",
@@ -99,9 +91,9 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
+        "format": "{icon}  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-plugged": "  {capacity}%",
         "format-icons": ["", "", "", "", ""],
         "tooltip-format": "Battery: {capacity}%\nPower: {power:.1f}W\nTime: {time}"
     },
@@ -115,8 +107,8 @@
 
     "wireplumber": {
         "scroll-step": 5,
-        "format": "{icon} {volume}%",
-        "format-muted": " Muted",
+        "format": "{icon}  {volume}%",
+        "format-muted": "  Muted",
         "format-icons": ["", "", ""],
         "tooltip-format": "Volume: {volume}%\nNode: {node_name}",
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
