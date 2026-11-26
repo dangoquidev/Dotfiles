@@ -5,7 +5,7 @@
 #   - runs as a rofi *script mode*: rofi stays on screen while an action starts,
 #     so there is never a frame of bare desktop between the menu and the result:
 #       lock / suspend → the menu closes only once hyprlock holds the session
-#       log out / reboot / shut down → confirmed in place (no close/reopen),
+#       log out / reboot / shut down / UEFI → confirmed in place (no close/reopen),
 #                                       then the menu stays up until the session dies
 
 set -uo pipefail
@@ -38,9 +38,15 @@ fi
 opt()   { printf '\0%s\x1f%s\n' "$1" "$2"; }                    # rofi mode option
 entry() { printf '%s\n<span size="38%%">%s</span>\0info\x1f%s|' "$1" "$2" "$3"; }  # icon label id
 
+can_firmware() {  # firmware supports "reboot into UEFI setup"
+    [[ "$(busctl call org.freedesktop.login1 /org/freedesktop/login1 \
+        org.freedesktop.login1.Manager CanRebootToFirmwareSetup 2>/dev/null)" == 's "yes"' ]]
+}
+
 main_menu() {
+    local cols=5; can_firmware && cols=6
     opt prompt "Up $(uptime -p | sed 's/^up //')"
-    opt theme "listview { columns: 5; }"
+    opt theme "listview { columns: $cols; }"
     opt markup-rows true
     opt no-custom true
     opt delim '|'
@@ -49,6 +55,7 @@ main_menu() {
     entry "󰍃" "Log out"   ask:logout
     entry "󰜉" "Reboot"    ask:reboot
     entry "󰐥" "Shut down" ask:poweroff
+    if (( cols == 6 )); then entry "󰒓" "UEFI" ask:firmware; fi
 }
 
 confirm_menu() {  # confirm_menu <action> <question> — "No" preselected
@@ -67,7 +74,7 @@ lock_and_wait() {  # start hyprlock and return once the session is actually lock
     pgrep -x hyprlock >/dev/null && return 0
     local log="${XDG_RUNTIME_DIR:-/tmp}/power-menu-hyprlock.log"
     : >"$log"
-    setsid -f hyprlock --verbose --immediate-render --no-fade-in >"$log" 2>&1 </dev/null
+    setsid -f hyprlock --verbose --no-fade-in >"$log" 2>&1 </dev/null
     for _ in $(seq 200); do                      # up to ~2s
         grep -q 'onLockLocked' "$log" 2>/dev/null && return 0
         sleep 0.01
@@ -91,9 +98,11 @@ case "${ROFI_RETV}:${ROFI_INFO:-}" in
     1:ask:logout)   confirm_menu logout   "Log out?" ;;
     1:ask:reboot)   confirm_menu reboot   "Reboot?" ;;
     1:ask:poweroff) confirm_menu poweroff "Shut down?" ;;
+    1:ask:firmware) confirm_menu firmware "Reboot into UEFI setup?" ;;
     1:do:logout)    logout;              hold ;;
     1:do:reboot)    systemctl reboot;    hold ;;
     1:do:poweroff)  systemctl poweroff;  hold ;;
+    1:do:firmware)  systemctl reboot --firmware-setup; hold ;;
     1:back)         main_menu ;;
 esac
 # printing nothing closes rofi

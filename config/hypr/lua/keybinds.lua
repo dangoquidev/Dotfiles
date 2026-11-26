@@ -16,11 +16,15 @@ hl.bind("SUPER + P", exec([[grim -g "$(slurp -d)" - | wl-copy]]))
 hl.bind("SUPER + SHIFT + P", exec([[grim -g "$(slurp -d)" - | tee /tmp/screenshot.png | wl-copy && swappy -f /tmp/screenshot.png]]))
 -- Super Ctrl P — area → saved file (+ clipboard)
 hl.bind("SUPER + CTRL + P", exec([[mkdir -p ~/Pictures/Screenshots && grim -g "$(slurp -d)" - | tee ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy]]))
+-- Print — full screen → saved file + clipboard
+hl.bind("Print", exec([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | tee "$f" | wl-copy && notify-send -a Screenshot -i "$f" Screenshot "Saved and copied"]]))
+-- Super Shift V — clipboard history (cliphist)
+hl.bind("SUPER + SHIFT + V", exec([[cliphist list | rofi -dmenu -i -p Clipboard -display-columns 2 -theme ~/.config/rofi/theme.rasi | cliphist decode | wl-copy]]))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
 
 hl.bind(key(mainMod, "B"), exec(p.browser))
 hl.bind(key(mainMod, "C"), exec("hyprpicker -a"))
-hl.bind(key(mainMod, "L"), exec("hyprlock"))
+hl.bind(key(mainMod, "L"), exec("loginctl lock-session"))
 hl.bind(key(mainMod, "W"), exec("~/.config/waybar/scripts/wifi-menu.sh"))
 hl.bind(key(mainMod, "SHIFT + W"), exec("pkill -SIGUSR2 waybar"))
 hl.bind(key(mainMod, "Escape"), exec("~/.config/waybar/scripts/power-menu.sh"))
@@ -69,7 +73,7 @@ hl.bind("XF86AudioMicMute",      exec("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ tog
 hl.bind("XF86MonBrightnessUp",   exec("brightnessctl -e4 -n2 set 5%+"),                  le)
 hl.bind("XF86MonBrightnessDown", exec("brightnessctl -e4 -n2 set 5%-"),                  le)
 
-hl.bind("switch:on:Lid Switch", exec("hyprlock & systemctl suspend"), { locked = true })
+-- Lid close: logind suspends, hypridle locks first (hypridle.conf)
 
 local l = { locked = true }
 hl.bind("XF86AudioNext",  exec("playerctl next"),       l)
