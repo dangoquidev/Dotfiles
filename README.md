@@ -72,6 +72,7 @@ Dotfiles/
 └── config/           # one folder per app, mirrored into ~/.config
     ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, hypridle, hyprsunset, scripts, wallpapers
     ├── waybar/       #   bar config, style, scripts (cava, wifi-menu, power-menu)
+    ├── quickshell/   #   wallpaper carousel (QML)
     ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
     ├── gtk-3.0/  gtk-4.0/  nwg-look/  xdg-desktop-portal/
     ├── spicetify/  vesktop/
@@ -139,7 +140,7 @@ cd ~/Dotfiles
 | `SUPER + T` | Terminal (kitty) |
 | `SUPER + A` | App launcher (rofi) |
 | `SUPER + B` | Browser (zen) |
-| `SUPER + SHIFT + B` | Wallpaper picker (`~/.config/hypr/wallpapers`, `~/Pictures/Wallpapers`) |
+| `SUPER + SHIFT + B` | Wallpaper carousel (`~/.config/hypr/wallpapers`, `~/Pictures/Wallpapers`): ←/→ rotate, Enter applies |
 | `SUPER + E` | File manager (thunar) |
 | `SUPER + Q` | Close window |
 | `SUPER + V` | Toggle floating |
@@ -223,6 +224,7 @@ One palette everywhere: Hyprland borders, waybar, rofi, dunst, hyprlock, kitty, 
 - **[HyDE Project](https://github.com/HyDE-Project/HyDE)** — Fastfetch and Hypr setup
 - **[DerAnsari](https://github.com/DerAnsari/hyprland-dots)** — Rice inspiration
 - **[Catppuccin](https://github.com/catppuccin)** — Color palette ideas
+- **[pibble](https://github.com/kianblakley/pibble)** — Wallpaper carousel design
 
 ---
 
