@@ -15,3 +15,5 @@ alias gb="git branch"
 alias gck="git checkout"
 alias gi="git init"
 alias gcl="git clone"
+
+fish_add_path ~/.local/bin

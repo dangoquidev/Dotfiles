@@ -1,5 +1,5 @@
 configuration {
-    font: "JetBrain Nerd Font Mono 14";
+    font: "Hack Nerd Font 13";
     show-icons: true;
     display-drun: "Launch";
     drun-display-format: "{name}";
