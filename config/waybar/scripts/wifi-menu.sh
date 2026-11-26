@@ -1,341 +1,270 @@
 #!/usr/bin/env bash
+# Rofi Wi-Fi menu for waybar (NetworkManager / nmcli)
+#   - first click opens the menu, a second click closes it
+#   - networks deduplicated by SSID (best signal), active network first
+#   - connects by SSID (not BSSID) so roaming between APs / bands keeps working
 
 set -uo pipefail
 
-THEME_FILE="$HOME/.config/rofi/theme.rasi"
-SEP=$'\x1f'
+THEME="$HOME/.config/rofi/theme.rasi"
 
-ACTION_TOGGLE="󰖪  Toggle Wi-Fi"
-ACTION_RESCAN="󰑓  Rescan Networks"
-ACTION_DISCONNECT="󰤭  Disconnect Current"
-ACTION_HIDDEN="󱛅  Connect Hidden Network"
-ACTION_SAVED="󰓹  Saved Networks"
-ACTION_FORGET_CURRENT="󰅖  Forget Current Network"
+# --- helpers ----------------------------------------------------------------
 
-notify() {
-    notify-send "WiFi" "$1" -t "${2:-2500}"
+notify() {  # notify <message> [urgency] — replaces the previous wifi notification (dunst)
+    notify-send -a "Wi-Fi" -u "${2:-low}" -h string:x-dunst-stack-tag:wifi-menu "Wi-Fi" "$1"
 }
 
-rofi_cmd_base() {
-    local cmd=(rofi -dmenu -i -p "$1")
-    if [ -f "$THEME_FILE" ]; then
-        cmd+=( -theme "$THEME_FILE" )
-    else
-        cmd+=( -theme-str 'window {width: 460px;}' )
-    fi
-    printf '%s\0' "${cmd[@]}"
+rofi_list() {  # rofi_list <prompt> — reads lines on stdin, prints the selected index
+    local args=(-dmenu -i -no-custom -format i -p "$1")
+    [[ -f "$THEME" ]] && args+=(-theme "$THEME")
+    rofi "${args[@]}"
 }
 
-rofi_menu() {
-    local prompt="$1"
-    local custom="${2:-false}"
-    local password="${3:-false}"
-    local cmd=()
-
-    while IFS= read -r -d '' item; do
-        cmd+=("$item")
-    done < <(rofi_cmd_base "$prompt")
-
-    [ "$custom" = "false" ] && cmd+=( -no-custom )
-    [ "$password" = "true" ] && cmd+=( -password )
-
-    "${cmd[@]}"
+rofi_input() {  # rofi_input <prompt> [password] — prints the typed text
+    local args=(-dmenu -p "$1" -theme-str 'listview { enabled: false; }')
+    [[ -f "$THEME" ]] && args=(-theme "$THEME" "${args[@]}")
+    [[ "${2:-}" == password ]] && args+=(-password)
+    rofi "${args[@]}" </dev/null
 }
 
-require_cmd() {
-    command -v "$1" >/dev/null 2>&1 || {
-        notify "Missing command: $1" 3500
-        exit 1
-    }
+nm_unescape() {  # unescape an `nmcli -t` field (\: and \\)
+    local s="${1//\\\\/$'\x01'}"
+    s="${s//\\:/:}"
+    printf '%s' "${s//$'\x01'/\\}"
 }
 
-get_iface() {
-    nmcli -t -f DEVICE,TYPE,STATE device status | awk -F: '$2 == "wifi" {print $1; exit}'
-}
-
-wifi_enabled() {
-    [ "$(nmcli radio wifi 2>/dev/null)" = "enabled" ]
-}
-
-current_ssid() {
-    nmcli -t -f ACTIVE,SSID device wifi | awk -F: '$1 == "yes" {print $2; exit}'
+nm_error() {  # extract the useful part of an nmcli error output
+    sed -n 's/^Error: //p' <<<"$1" | head -n1 | cut -c1-160
 }
 
 signal_icon() {
-    local signal="$1"
-    if [ "$signal" -ge 80 ]; then
-        printf '󰤨'
-    elif [ "$signal" -ge 60 ]; then
-        printf '󰤥'
-    elif [ "$signal" -ge 40 ]; then
-        printf '󰤢'
+    local s="${1:-0}"
+    [[ "$s" =~ ^[0-9]+$ ]] || s=0
+    if   (( s >= 75 )); then printf '󰤨'
+    elif (( s >= 50 )); then printf '󰤥'
+    elif (( s >= 25 )); then printf '󰤢'
+    else                     printf '󰤟'
+    fi
+}
+
+# --- NetworkManager state ---------------------------------------------------
+
+get_iface() {
+    nmcli -t -f DEVICE,TYPE device status | awk -F: '$2 == "wifi" { print $1; exit }'
+}
+
+wifi_enabled() { [[ "$(nmcli radio wifi 2>/dev/null)" == enabled ]]; }
+
+active_uuid() {  # UUID of the active connection on the interface ("" if none)
+    nmcli -g GENERAL.CON-UUID device show "$IFACE" 2>/dev/null
+}
+
+saved_uuid_for_ssid() {  # UUID of the most recently used profile for an SSID ("" if none)
+    local ssid="$1" uuid type ts best="" best_ts=-1
+    while IFS=: read -r uuid type ts; do
+        [[ "$type" == 802-11-wireless ]] || continue
+        [[ "$(nmcli -g 802-11-wireless.ssid connection show uuid "$uuid" 2>/dev/null)" == "$ssid" ]] || continue
+        (( ts > best_ts )) && { best="$uuid"; best_ts="$ts"; }
+    done < <(nmcli -t -f UUID,TYPE,TIMESTAMP connection show)
+    printf '%s' "$best"
+}
+
+forget_ssid() {  # forget_ssid <ssid> — remove every trace of a network
+    local ssid="$1" uuid type n=0
+    [[ -z "$ssid" ]] && return
+    # every NM profile for this SSID (there can be duplicates: "SSID 1", "SSID 2"…)
+    while IFS=: read -r uuid type; do
+        [[ "$type" == 802-11-wireless ]] || continue
+        [[ "$(nmcli -g 802-11-wireless.ssid connection show uuid "$uuid" 2>/dev/null)" == "$ssid" ]] || continue
+        nmcli connection delete uuid "$uuid" >/dev/null 2>&1 && n=$((n + 1))
+    done < <(nmcli -t -f UUID,TYPE connection show)
+
+    # with the iwd backend, iwd keeps its own copy of the password in /var/lib/iwd:
+    # without this, the network reconnects later without asking for the password
+    if command -v iwctl >/dev/null; then
+        iwctl known-networks "$ssid" forget >/dev/null 2>&1 && n=$((n + 1))
+    fi
+
+    if (( n )); then notify "Forgot $ssid"; else notify "Could not forget $ssid" critical; fi
+}
+
+activate() {  # activate <uuid> <name> — bring a saved profile up, return nmcli's status
+    local out
+    notify "Connecting to $2…"
+    if out="$(nmcli --wait 30 connection up uuid "$1" 2>&1)"; then
+        notify "Connected to $2"
     else
-        printf '󰤟'
+        notify "Failed: $(nm_error "$out")" critical
+        return 1
     fi
 }
 
-connect_open_or_prompt() {
-    local iface="$1"
-    local bssid="$2"
-    local ssid="$3"
+# --- actions ----------------------------------------------------------------
 
-    if nmcli device wifi connect "$bssid" ifname "$iface" >/dev/null 2>&1; then
-        notify "Connected to $ssid"
-        return 0
-    fi
+connect_ssid() {  # connect_ssid <ssid> <security>
+    local ssid="$1" security="$2" uuid out pass
 
-    local pass
-    pass=$(rofi_menu "󰌾  Password for $ssid" true true)
-    [ -z "$pass" ] && return 1
-
-    if nmcli device wifi connect "$bssid" ifname "$iface" password "$pass" >/dev/null 2>&1; then
-        notify "Connected to $ssid"
-        return 0
-    fi
-
-    notify "Connection failed: $ssid" 3500
-    return 1
-}
-
-connect_hidden_network() {
-    local iface="$1"
-    local ssid pass
-
-    ssid=$(rofi_menu "󱛅  Hidden SSID" true false)
-    [ -z "$ssid" ] && return
-
-    pass=$(rofi_menu "󰌾  Password (empty = open)" true true)
-
-    if [ -z "$pass" ]; then
-        if nmcli device wifi connect "$ssid" ifname "$iface" hidden yes >/dev/null 2>&1; then
-            notify "Connected to $ssid"
-        else
-            notify "Failed to connect hidden network" 3500
-        fi
-    else
-        if nmcli device wifi connect "$ssid" ifname "$iface" password "$pass" hidden yes >/dev/null 2>&1; then
-            notify "Connected to $ssid"
-        else
-            notify "Failed to connect hidden network" 3500
-        fi
-    fi
-}
-
-saved_networks_menu() {
-    local entries profile choice
-    mapfile -t entries < <(
-        nmcli -t -f NAME,UUID,TYPE,AUTOCONNECT connection show | awk -F: '
-        $3 == "802-11-wireless" {
-            autoconnect = ($4 == "yes") ? "auto:on" : "auto:off"
-            print "󰓹  " $1 " [" autoconnect "]" "\t" $2 "\t" $4
-        }'
-    )
-
-    if [ "${#entries[@]}" -eq 0 ]; then
-        notify "No saved Wi-Fi profiles"
+    # 1. saved profile → just bring it up
+    uuid="$(saved_uuid_for_ssid "$ssid")"
+    if [[ -n "$uuid" ]]; then
+        activate "$uuid" "$ssid" && return
+        # most likely the password changed → ask for the new one
+        [[ -z "$security" ]] && return
+        pass="$(rofi_input "󰌾  New password ($ssid)" password)" || return
+        [[ -z "$pass" ]] && return
+        nmcli connection modify uuid "$uuid" wifi-sec.psk "$pass" >/dev/null 2>&1
+        activate "$uuid" "$ssid"
         return
     fi
 
-    local display=()
-    local uuids=()
-    for profile in "${entries[@]}"; do
-        display+=("${profile%%$'\t'*}")
-        profile="${profile#*$'\t'}"
-        uuids+=("${profile%%$'\t'*}")
-    done
+    # 2. new network
+    local args=(--wait 30 device wifi connect "$ssid" ifname "$IFACE")
+    if [[ -n "$security" ]]; then
+        pass="$(rofi_input "󰌾  Password ($ssid)" password)" || return
+        [[ -z "$pass" ]] && return
+        args+=(password "$pass")
+    fi
 
-    choice=$(printf '%s\n' "${display[@]}" | rofi_menu "󰓹  Saved Wi-Fi" false false)
-    [ -z "$choice" ] && return
-
-    local idx=-1
-    local i
-    for i in "${!display[@]}"; do
-        if [ "${display[$i]}" = "$choice" ]; then
-            idx="$i"
-            break
-        fi
-    done
-
-    [ "$idx" -lt 0 ] && return
-
-    local uuid="${uuids[$idx]}"
-    local name
-    name=$(nmcli -g connection.id connection show "$uuid" 2>/dev/null)
-    [ -z "$name" ] && return
-
-    local action
-    action=$(printf '%s\n' "󰓛  Connect" "󰅖  Forget" "󰯄  Toggle Autoconnect" | rofi_menu "$name" false false)
-    [ -z "$action" ] && return
-
-    case "$action" in
-        *"Connect"*)
-            if nmcli connection up "$uuid" >/dev/null 2>&1; then
-                notify "Connected profile: $name"
-            else
-                notify "Failed to connect profile: $name" 3500
-            fi
-            ;;
-        *"Forget"*)
-            if nmcli connection delete "$uuid" >/dev/null 2>&1; then
-                notify "Deleted profile: $name"
-            else
-                notify "Failed to delete profile: $name" 3500
-            fi
-            ;;
-        *"Toggle Autoconnect"*)
-            local current
-            current=$(nmcli -g connection.autoconnect connection show "$uuid" 2>/dev/null)
-            if [ "$current" = "yes" ]; then
-                nmcli connection modify "$uuid" connection.autoconnect no >/dev/null 2>&1 && notify "Autoconnect OFF: $name"
-            else
-                nmcli connection modify "$uuid" connection.autoconnect yes >/dev/null 2>&1 && notify "Autoconnect ON: $name"
-            fi
-            ;;
-    esac
-}
-
-build_network_menu() {
-    local iface="$1"
-    local raw=()
-    local menu_lines=()
-    local map_lines=()
-    local line safe inuse bssid ssid signal security icon lock active hidden short_bssid
-
-    mapfile -t raw < <(nmcli -t -f IN-USE,BSSID,SSID,SIGNAL,SECURITY device wifi list ifname "$iface")
-
-    for line in "${raw[@]}"; do
-        safe="${line//\\:/$SEP}"
-        IFS=':' read -r inuse bssid ssid signal security <<< "$safe"
-
-        bssid="${bssid//$SEP/:}"
-        ssid="${ssid//$SEP/:}"
-        signal="${signal//$SEP/:}"
-        security="${security//$SEP/:}"
-
-        [ -z "$bssid" ] && continue
-
-        if [ -z "$ssid" ]; then
-            hidden="[hidden]"
-            ssid="$hidden"
-        fi
-
-        icon=$(signal_icon "${signal:-0}")
-        lock=""
-        active=""
-        short_bssid="${bssid##*:}"
-
-        [ -n "$security" ] && [ "$security" != "--" ] && lock=" 󰌾"
-        [ "$inuse" = "*" ] && active=" ✓"
-
-        menu_lines+=("$icon  $ssid$lock$active  [$signal%] [$short_bssid]")
-        map_lines+=("$bssid$SEP$ssid")
-    done
-
-    printf '%s\n' \
-        "$ACTION_TOGGLE" \
-        "$ACTION_RESCAN" \
-        "$ACTION_DISCONNECT" \
-        "$ACTION_HIDDEN" \
-        "$ACTION_SAVED" \
-        "$ACTION_FORGET_CURRENT"
-
-    [ "${#menu_lines[@]}" -gt 0 ] && printf '%s\n' "${menu_lines[@]}"
-
-    printf '\n__MAP__\n'
-    [ "${#map_lines[@]}" -gt 0 ] && printf '%s\n' "${map_lines[@]}"
-}
-
-forget_current_network() {
-    local current="$1"
-    [ -z "$current" ] && {
-        notify "No active network"
-        return
-    }
-
-    if nmcli connection delete "$current" >/dev/null 2>&1; then
-        notify "Forgot current network: $current"
+    notify "Connecting to $ssid…"
+    if out="$(nmcli "${args[@]}" 2>&1)"; then
+        notify "Connected to $ssid"
     else
-        notify "Could not forget network: $current" 3500
+        # don't leave a broken profile behind (otherwise: "SSID 1", "SSID 2"… duplicates)
+        uuid="$(saved_uuid_for_ssid "$ssid")"
+        [[ -n "$uuid" ]] && nmcli connection delete uuid "$uuid" >/dev/null 2>&1
+        notify "Failed: $(nm_error "$out")" critical
     fi
 }
 
-main() {
-    require_cmd nmcli
-    require_cmd rofi
-    require_cmd notify-send
+connect_hidden() {
+    local ssid pass out args
+    ssid="$(rofi_input "󱛅  Hidden SSID")" || return
+    [[ -z "$ssid" ]] && return
+    pass="$(rofi_input "󰌾  Password (empty = open)" password)" || return
 
-    local iface
-    iface=$(get_iface)
+    args=(--wait 30 device wifi connect "$ssid" ifname "$IFACE" hidden yes)
+    [[ -n "$pass" ]] && args+=(password "$pass")
 
-    if [ -z "$iface" ]; then
-        notify "No Wi-Fi interface found" 3500
-        exit 1
+    notify "Connecting to $ssid…"
+    if out="$(nmcli "${args[@]}" 2>&1)"; then
+        notify "Connected to $ssid"
+    else
+        notify "Failed: $(nm_error "$out")" critical
     fi
+}
 
-    local current radio_state prompt choice menu_blob menu_entries map_entries
-    current=$(current_ssid)
-    radio_state="OFF"
-    wifi_enabled && radio_state="ON"
-    prompt="󰤨  Wi-Fi ($radio_state)"
+saved_menu() {
+    local uuids=() names=() lines=() uuid type auto name active idx
+    active="$(active_uuid)"
 
-    menu_blob=$(build_network_menu "$iface")
-    menu_entries=$(printf '%s\n' "$menu_blob" | sed '/^__MAP__$/,$d')
-    map_entries=$(printf '%s\n' "$menu_blob" | sed -n '/^__MAP__$/,$p' | sed '1d')
+    while IFS=: read -r uuid type auto name; do
+        [[ "$type" == 802-11-wireless ]] || continue
+        name="$(nm_unescape "$name")"
+        uuids+=("$uuid"); names+=("$name")
+        local mark="" autostr="auto"
+        [[ "$uuid" == "$active" ]] && mark="  ✓"
+        [[ "$auto" == yes ]] || autostr="manual"
+        lines+=("󰓹  $name$mark  [$autostr]")
+    done < <(nmcli -t -f UUID,TYPE,AUTOCONNECT,NAME connection show)
 
-    choice=$(printf '%s\n' "$menu_entries" | sed '/^$/d' | rofi_menu "$prompt" false false)
-    [ -z "$choice" ] && exit 0
+    (( ${#lines[@]} )) || { notify "No saved networks"; return; }
 
-    case "$choice" in
-        "$ACTION_TOGGLE")
-            if wifi_enabled; then
-                nmcli radio wifi off >/dev/null 2>&1 && notify "Wi-Fi turned OFF"
+    idx="$(printf '%s\n' "${lines[@]}" | rofi_list "󰓹  Saved networks")" || return
+    [[ -z "$idx" ]] && return
+    uuid="${uuids[$idx]}"; name="${names[$idx]}"
+
+    local actions=("󰖩  Connect" "󰯄  Toggle autoconnect" "󰅖  Forget")
+    idx="$(printf '%s\n' "${actions[@]}" | rofi_list "$name")" || return
+    case "$idx" in
+        0)  activate "$uuid" "$name" ;;
+        1)  if [[ "$(nmcli -g connection.autoconnect connection show uuid "$uuid")" == yes ]]; then
+                nmcli connection modify uuid "$uuid" connection.autoconnect no && notify "Autoconnect off: $name"
             else
-                nmcli radio wifi on >/dev/null 2>&1 && notify "Wi-Fi turned ON"
-            fi
-            exit 0
-            ;;
-        "$ACTION_RESCAN")
-            nmcli device wifi rescan ifname "$iface" >/dev/null 2>&1 && notify "Scanning networks..."
-            exit 0
-            ;;
-        "$ACTION_DISCONNECT")
-            nmcli device disconnect "$iface" >/dev/null 2>&1 && notify "Disconnected"
-            exit 0
-            ;;
-        "$ACTION_HIDDEN")
-            connect_hidden_network "$iface"
-            exit 0
-            ;;
-        "$ACTION_SAVED")
-            saved_networks_menu
-            exit 0
-            ;;
-        "$ACTION_FORGET_CURRENT")
-            forget_current_network "$current"
-            exit 0
-            ;;
+                nmcli connection modify uuid "$uuid" connection.autoconnect yes && notify "Autoconnect on: $name"
+            fi ;;
+        2)  forget_ssid "$(nmcli -g 802-11-wireless.ssid connection show uuid "$uuid" 2>/dev/null)" ;;
     esac
-
-    local selected_map=""
-    local map_line bssid ssid
-    while IFS= read -r map_line; do
-        [ -z "$map_line" ] && continue
-        bssid="${map_line%%$SEP*}"
-        ssid="${map_line#*$SEP}"
-        local short_bssid="${bssid##*:}"
-
-        if printf '%s' "$choice" | grep -q "\[$short_bssid\]$"; then
-            if [ "$ssid" = "[hidden]" ]; then
-                connect_hidden_network "$iface"
-            else
-                connect_open_or_prompt "$iface" "$bssid" "$ssid"
-            fi
-            selected_map="1"
-            break
-        fi
-    done <<< "$map_entries"
-
-    [ -z "$selected_map" ] && notify "No action executed" 1800
 }
 
-main "$@"
+# --- main menu --------------------------------------------------------------
+
+main_menu() {  # main_menu [rescan]
+    local rescan="${1:-no}"
+
+    if ! wifi_enabled; then
+        local idx
+        idx="$(printf '%s\n' "󰖩  Enable Wi-Fi" | rofi_list "󰖪  Wi-Fi off")" || return
+        [[ "$idx" == 0 ]] && nmcli radio wifi on && notify "Wi-Fi enabled"
+        return
+    fi
+
+    # scan: IN-USE,SIGNAL,SECURITY,SSID — SSID last because it can contain ':'
+    declare -A best_signal=() best_sec=() in_use=()
+    local inuse signal security ssid
+    while IFS=: read -r inuse signal security ssid; do
+        ssid="$(nm_unescape "$ssid")"
+        [[ -z "$ssid" ]] && continue            # hidden networks → dedicated action
+        [[ "$security" == "--" ]] && security=""
+        [[ "$inuse" == "*" ]] && in_use[$ssid]=1
+        if (( signal > ${best_signal[$ssid]:--1} )); then
+            best_signal[$ssid]="$signal"; best_sec[$ssid]="$security"
+        fi
+    done < <(nmcli -t -f IN-USE,SIGNAL,SECURITY,SSID device wifi list ifname "$IFACE" --rescan "$rescan" 2>/dev/null)
+
+    # sort: active network first, then by signal strength
+    local ssids=() lines=()
+    while IFS=$'\t' read -r _ _ ssid; do
+        ssids+=("$ssid")
+        local lock="" mark=""
+        [[ -n "${best_sec[$ssid]}" ]] && lock="  󰌾"
+        [[ -n "${in_use[$ssid]:-}" ]] && mark="  ✓"
+        lines+=("$(signal_icon "${best_signal[$ssid]}")  $ssid$lock$mark")
+    done < <(for s in "${!best_signal[@]}"; do
+                 printf '%s\t%s\t%s\n' "${in_use[$s]:-0}" "${best_signal[$s]}" "$s"
+             done | sort -t$'\t' -k1,1nr -k2,2nr)
+
+    # actions (below the networks)
+    local actions=("󰑓  Rescan")
+    [[ -n "$(active_uuid)" ]] && actions+=("󰤭  Disconnect" "󰅖  Forget current network")
+    actions+=("󰓹  Saved networks" "󱛅  Hidden network…" "󰖪  Disable Wi-Fi")
+
+    local idx
+    idx="$(printf '%s\n' "${lines[@]}" "${actions[@]}" | rofi_list "󰤨  Wi-Fi")" || return
+    [[ -z "$idx" ]] && return
+
+    if (( idx < ${#ssids[@]} )); then
+        ssid="${ssids[$idx]}"
+        if [[ -n "${in_use[$ssid]:-}" ]]; then
+            notify "Already connected to $ssid"
+        else
+            connect_ssid "$ssid" "${best_sec[$ssid]}"
+        fi
+        return
+    fi
+
+    case "${actions[$(( idx - ${#ssids[@]} ))]}" in
+        *Rescan*)          notify "Scanning…"; main_menu yes ;;
+        *Disconnect*)      nmcli device disconnect "$IFACE" >/dev/null 2>&1 && notify "Disconnected" ;;
+        *Forget*)          forget_ssid "$(nmcli -g 802-11-wireless.ssid connection show uuid "$(active_uuid)" 2>/dev/null)" ;;
+        *Saved*)           saved_menu ;;
+        *Hidden*)          connect_hidden ;;
+        *Disable*)         nmcli radio wifi off && notify "Wi-Fi disabled" ;;
+    esac
+}
+
+# --- main -------------------------------------------------------------------
+
+# second click on the waybar module → close the menu that is already open
+if pgrep -x rofi >/dev/null; then
+    pkill -x rofi
+    exit 0
+fi
+
+for cmd in nmcli rofi notify-send; do
+    command -v "$cmd" >/dev/null || { notify-send "Wi-Fi" "Missing command: $cmd" 2>/dev/null; exit 1; }
+done
+
+IFACE="$(get_iface)"
+[[ -z "$IFACE" ]] && { notify "No Wi-Fi interface found" critical; exit 1; }
+
+main_menu
