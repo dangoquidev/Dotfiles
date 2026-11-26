@@ -5,6 +5,7 @@
 hyprland
 hyprlock
 hypridle
+hyprsunset
 hyprpicker
 hyprpolkitagent
 xdg-desktop-portal-hyprland
@@ -31,18 +32,26 @@ slurp
 swappy
 wl-clipboard
 cliphist
+libvips
+python-pillow
+pacman-contrib
 
 # --- Hardware: audio, network, brightness, media keys
 pipewire
 pipewire-pulse
 wireplumber
+pavucontrol
 networkmanager
 iwd
 brightnessctl
+power-profiles-daemon
+bluez
+blueman
 playerctl
 
 # --- Apps
 thunar
+gvfs
 zen-browser-bin
 spotify
 spicetify-cli

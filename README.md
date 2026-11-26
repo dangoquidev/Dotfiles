@@ -70,7 +70,7 @@ Dotfiles/
 ├── packages.txt      # packages the rice needs
 ├── assets/           # README screenshots
 └── config/           # one folder per app, mirrored into ~/.config
-    ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, hypridle, wallpapers
+    ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, hypridle, hyprsunset, scripts, wallpapers
     ├── waybar/       #   bar config, style, scripts (cava, wifi-menu, power-menu)
     ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
     ├── gtk-3.0/  gtk-4.0/  nwg-look/  xdg-desktop-portal/
@@ -139,6 +139,7 @@ cd ~/Dotfiles
 | `SUPER + T` | Terminal (kitty) |
 | `SUPER + A` | App launcher (rofi) |
 | `SUPER + B` | Browser (zen) |
+| `SUPER + SHIFT + B` | Wallpaper picker (`~/.config/hypr/wallpapers`, `~/Pictures/Wallpapers`) |
 | `SUPER + E` | File manager (thunar) |
 | `SUPER + Q` | Close window |
 | `SUPER + V` | Toggle floating |
@@ -151,8 +152,10 @@ cd ~/Dotfiles
 | `SUPER + SHIFT + P` | Screenshot area → swappy |
 | `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
 | `Print` | Screenshot full screen → `~/Pictures/Screenshots` + clipboard |
+| `SHIFT + Print` | Screenshot active window → `~/Pictures/Screenshots` + clipboard |
 | `SUPER + W` | Wi-Fi menu |
 | `SUPER + SHIFT + W` | Reload waybar |
+| `SUPER + N` | Night light on / off (hyprsunset) |
 | `SUPER + ←↑→↓` | Move focus |
 | `SUPER + SHIFT + ←↑→↓` | Resize window |
 | `SUPER + 1…0` | Go to workspace |
@@ -173,6 +176,35 @@ cd ~/Dotfiles
 | 30 min | Suspend |
 
 The session is always locked before a suspend (lid, power menu, idle). Timeouts live in `config/hypr/hypridle.conf`.
+
+### Waybar
+
+- **Left**: workspaces · clock · system (CPU, RAM, temperature, power profile) · updates (hidden when up to date) · music + cava
+- **Center**: window title
+- **Right**: tray · quick toggles (stay awake, night light, do not disturb) · Wi-Fi + Bluetooth · volume + brightness · battery · power menu
+
+### Colors
+
+One palette everywhere: Hyprland borders, waybar, rofi, dunst, hyprlock, kitty, Spotify (spicetify `text` theme,
+`Rice` scheme), Vesktop (system24), GTK (Catppuccin Mocha Pink).
+
+| Role | Color |
+|------|-------|
+| Base | `#1a1a2a` |
+| Surface | `#252535` / `#2a2a3a` |
+| Muted | `#3a3a4a` |
+| Text | `#e0def4` |
+| Pink | `#ff8fa3` |
+| Light pink | `#ffd1dc` |
+| Red | `#f7768e` |
+| Mint | `#b8f5c8` |
+
+### Background helpers
+
+- **Wallpaper**: the last one is restored at login, and each change regenerates the blurred lockscreen image (`~/.cache/hypr/lock.jpg`).
+- **Night light** (hyprsunset): warm screen (4000 K) from 20:30 to 7:00, schedule in `config/hypr/hyprsunset.conf`.
+- **Low battery**: notification at 15 %, critical one at 5 % (`config/hypr/scripts/battery-notify.sh`).
+- **Clipboard history**: cliphist records text and images, `SUPER + SHIFT + V` to pick one.
 
 ---
 
