@@ -29,6 +29,8 @@ hl.bind(key(mainMod, "C"), exec("hyprpicker -a"))
 hl.bind(key(mainMod, "L"), exec("loginctl lock-session"))
 hl.bind(key(mainMod, "W"), exec("~/.config/waybar/scripts/wifi-menu.sh"))
 hl.bind(key(mainMod, "SHIFT + W"), exec("pkill -SIGUSR2 waybar"))
+-- Super N — night light on/off (hyprsunset; the schedule is in hyprsunset.conf)
+hl.bind(key(mainMod, "N"), exec("~/.config/waybar/scripts/nightlight.sh toggle"))
 hl.bind(key(mainMod, "Escape"), exec("~/.config/waybar/scripts/power-menu.sh"))
 
 hl.bind(key(mainMod, "left"),  hl.dsp.focus({ direction = "left" }))
