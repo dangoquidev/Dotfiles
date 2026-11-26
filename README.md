@@ -50,7 +50,7 @@ Heavily inspired by the amazing [HyDE Project](https://github.com/HyDE-Project/H
 | **Terminal** | Kitty |
 | **Shell** | Fish + [Tide](https://github.com/IlanCosman/tide) prompt |
 | **Fetch** | Fastfetch (random logo on each launch) |
-| **Font** | Hack Nerd Font |
+| **Font** | Maple Mono NF CN (ligatures, Nerd icons, Chinese/Japanese built in) + Noto Color Emoji |
 | **GTK / Cursor** | Catppuccin Mocha Pink |
 | **Music** | Spotify + Spicetify |
 | **Discord** | Vesktop (System24 theme) |
@@ -72,9 +72,9 @@ Dotfiles/
 └── config/           # one folder per app, mirrored into ~/.config
     ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, hypridle, hyprsunset, scripts, wallpapers
     ├── waybar/       #   bar config, style, scripts (cava, wifi-menu, power-menu)
-    ├── quickshell/   #   wallpaper carousel (QML)
+    ├── quickshell/   #   shell/: volume-brightness OSD + clipboard panel (resident), wallpaper/: carousel
     ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
-    ├── gtk-3.0/  gtk-4.0/  nwg-look/  xdg-desktop-portal/
+    ├── gtk-3.0/  gtk-4.0/  nwg-look/  xdg-desktop-portal/  fontconfig/
     ├── spicetify/  vesktop/
     └── git/          #   no identity inside, see "Git identity" below
 ```
@@ -144,7 +144,7 @@ cd ~/Dotfiles
 | `SUPER + E` | File manager (thunar) |
 | `SUPER + Q` | Close window |
 | `SUPER + V` | Toggle floating |
-| `SUPER + SHIFT + V` | Clipboard history (cliphist) |
+| `SUPER + SHIFT + V` | Clipboard history with image previews (type to search, Shift+Del removes) |
 | `SUPER + L` | Lock screen |
 | `SUPER + M` | Exit Hyprland |
 | `SUPER + Escape` | Power menu (lock, suspend, log out, reboot, shut down) |
@@ -154,6 +154,7 @@ cd ~/Dotfiles
 | `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
 | `Print` | Screenshot full screen → `~/Pictures/Screenshots` + clipboard |
 | `SHIFT + Print` | Screenshot active window → `~/Pictures/Screenshots` + clipboard |
+| `SUPER + Space` | Switch keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), notification shows the current one |
 | `SUPER + W` | Wi-Fi menu |
 | `SUPER + SHIFT + W` | Reload waybar |
 | `SUPER + N` | Night light on / off (hyprsunset) |
@@ -180,9 +181,9 @@ The session is always locked before a suspend (lid, power menu, idle). Timeouts 
 
 ### Waybar
 
-- **Left**: workspaces · clock · system (CPU, RAM, temperature, power profile) · updates (hidden when up to date) · music + cava
+- **Left**: workspaces · clock + date · system (CPU, RAM, temperature, power profile) · cava (while Spotify runs)
 - **Center**: window title
-- **Right**: tray · quick toggles (stay awake, night light, do not disturb) · Wi-Fi + Bluetooth · volume + brightness · battery · power menu
+- **Right**: now playing (title – artist) · updates (hidden when up to date) · tray · quick toggles (stay awake, night light, do not disturb) · Wi-Fi + Bluetooth · volume + brightness · battery · power menu
 
 ### Colors
 
@@ -200,12 +201,20 @@ One palette everywhere: Hyprland borders, waybar, rofi, dunst, hyprlock, kitty, 
 | Red | `#f7768e` |
 | Mint | `#b8f5c8` |
 
+### Font
+
+**Maple Mono NF CN** everywhere: kitty, waybar, rofi, dunst, hyprlock, Quickshell, GTK, Spotify, Vesktop,
+and as the system `sans-serif` / `serif` / `monospace` (`config/fontconfig/fonts.conf`), so browsers and
+Electron/Qt apps use it too. Code ligatures (`->` `=>` `==` `!=`…) are on in kitty, except under the cursor.
+Color emoji come from Noto Color Emoji. Korean isn't covered.
+
 ### Background helpers
 
 - **Wallpaper**: the last one is restored at login, and each change regenerates the blurred lockscreen image (`~/.cache/hypr/lock.jpg`).
 - **Night light** (hyprsunset): warm screen (4000 K) from 20:30 to 7:00, schedule in `config/hypr/hyprsunset.conf`.
 - **Low battery**: notification at 15 %, critical one at 5 % (`config/hypr/scripts/battery-notify.sh`).
-- **Clipboard history**: cliphist records text and images, `SUPER + SHIFT + V` to pick one.
+- **Clipboard history**: cliphist records text and images; `SUPER + SHIFT + V` opens a Quickshell panel with image previews.
+- **OSD**: a small pill at the bottom shows volume, mic mute and brightness changes (Quickshell, follows PipeWire live).
 
 ---
 
