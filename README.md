@@ -42,14 +42,14 @@ This setup draws heavy inspiration from the amazing [HyDE Project](https://githu
 
 | Component | Name |
 |-----------|------|
-| **Window Manager** | [Hyprland](https://hyprland.org/) |
+| **Window Manager** | [Hyprland](https://hyprland.org/) (config Lua, ≥ 0.57) |
 | **Display Manager** | SDDM |
 | **Color Scheme** | Dark Pink |
 | **Status Bar** | Waybar |
 | **Launcher** | Rofi |
 | **Browser** | Zen |
 | **Editor** | Visual Studio Code / Nano |
-| **Wallpaper** | swww |
+| **Wallpaper** | awww |
 | **Notifications** | Dunst |
 | **Music** | Spotify + spicetify |
 | **Discord** | Vesktop |
@@ -63,33 +63,42 @@ This setup draws heavy inspiration from the amazing [HyDE Project](https://githu
 
 ## Installation
 
-### Quick Install
+Every config lives in `config/` and is linked into `$HOME` with symlinks.
+The full list of links is in [`links.txt`](links.txt) (`group  repo-path  target`).
 
 ```bash
-git clone https://github.com/dangoquidev/Dotfiles.git
-cd Dotfiles
-./setup.sh
+git clone https://github.com/dangoquidev/Dotfiles.git ~/Dotfiles
+cd ~/Dotfiles
+./install.sh                 # interactive menu (whiptail), or install everything
+./install.sh install hypr waybar   # only some groups
+./install.sh status          # state of every link
+./install.sh -n install      # dry-run, changes nothing
+./install.sh uninstall [group…]    # remove links and restore backups
 ```
 
-### Installation Steps
+Existing files are never deleted: they are moved to
+`~/.local/state/dotfiles/backup/<date>/` before the link is created.
 
-The installer features a beautiful TUI interface:
+Since the files are symlinked, editing `~/.config/...` edits the repo directly:
+a `git status` is enough to see what changed.
 
-**Step 1:** Run the setup script
-```bash
-./setup.sh
+### Git identity
+
+`config/git/config` contains no personal info: it includes `~/.gitconfig.local`,
+which is not versioned. To create it on a new machine:
+
+```ini
+[user]
+	name = Your Name
+	email = you@example.com
+	signingkey = <GPG key ID>
 ```
 
-**Step 2:** Choose your action
-- `Install` — Fresh installation
-- `Restore` — Restore from backup
+### Adding a new config
 
-
-**Step 3:** Select features to install
-- Pick individual components
-- Or install everything at once
-
-That's it!
+1. Move the folder into `config/<name>`
+2. Add a line to `links.txt`
+3. `./install.sh install <group>`
 
 ---
 

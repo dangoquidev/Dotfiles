@@ -1,0 +1,19 @@
+# Manifest des symlinks : <groupe>  <chemin dans le repo>  <cible relative à $HOME>
+# Un dossier entier ou un seul fichier peut être lié.
+
+hypr        config/hypr                         .config/hypr
+waybar      config/waybar                       .config/waybar
+rofi        config/rofi                         .config/rofi
+kitty       config/kitty                        .config/kitty
+fish        config/fish                         .config/fish
+fastfetch   config/fastfetch                    .config/fastfetch
+git         config/git                          .config/git
+dunst       config/dunst                        .config/dunst
+cava        config/cava/waybar.conf             .config/cava/waybar.conf
+spicetify   config/spicetify                    .config/spicetify
+vesktop     config/vesktop/themes               .config/vesktop/themes
+gtk         config/gtk-3.0/settings.ini         .config/gtk-3.0/settings.ini
+gtk         config/gtk-4.0/settings.ini         .config/gtk-4.0/settings.ini
+gtk         config/nwg-look                     .config/nwg-look
+gtk         config/xsettingsd                   .config/xsettingsd
+portal      config/xdg-desktop-portal           .config/xdg-desktop-portal
