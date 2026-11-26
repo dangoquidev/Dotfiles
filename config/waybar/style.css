@@ -1,6 +1,6 @@
 * {
-    font-family: "Hack Nerd Font";
-    font-size: 13px;
+    font-family: "Maple Mono NF CN";
+    font-size: 12px;
     border: none;
     border-radius: 0;
     min-height: 0;
@@ -33,7 +33,7 @@ window#waybar.empty #window {
 }
 
 #workspaces button {
-    padding: 0 10px;
+    padding: 0 7px;
     color: #ffffff;
     background: transparent;
 }
@@ -62,10 +62,10 @@ window#waybar.empty #window {
 #temperature,
 #mpris,
 #custom-cava {
-    padding: 0 12px;
+    padding: 0 9px;
     background: rgba(26, 26, 42, 0.85);
     border: 2px solid #ff8fa3;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 #cpu {
@@ -85,7 +85,7 @@ window#waybar.empty #window {
 }
 
 #window {
-    padding: 0 16px;
+    padding: 0 12px;
     font-weight: bold;
     color: #ffffff;
     background: rgba(26, 26, 42, 0.85);
@@ -109,10 +109,10 @@ window#waybar.empty #window {
 #battery,
 #clock,
 #wireplumber {
-    padding: 0 12px;
+    padding: 0 9px;
     background: rgba(26, 26, 42, 0.85);
     border: 2px solid #ff8fa3;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 #network.disconnected,
@@ -143,8 +143,8 @@ window#waybar.empty #window {
 }
 
 #custom-power {
-    padding: 0 12px;
-    margin-left: 8px;
+    padding: 0 9px;
+    margin-left: 6px;
     color: #1a1a2a;
     background: #ff8fa3;
     border: 2px solid #ff8fa3;
@@ -159,7 +159,7 @@ window#waybar.empty #window {
     padding: 0 8px;
     background: rgba(26, 26, 42, 0.85);
     border: 2px solid #ff8fa3;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 #tray menu {
@@ -182,7 +182,7 @@ tooltip label {
 }
 
 #custom-cava {
-    color: #b8f5c8; /* Vert Spotify */
+    color: #b8f5c8; /* mint */
     font-family: monospace;
     font-size: 12px;
     padding: 0 5px;
@@ -192,7 +192,7 @@ tooltip label {
 #toggles {
     background: rgba(26, 26, 42, 0.85);
     border: 2px solid #ff8fa3;
-    margin-left: 8px;
+    margin-left: 6px;
     padding: 0 4px;
 }
 
@@ -220,7 +220,7 @@ tooltip label {
 #levels {
     background: rgba(26, 26, 42, 0.85);
     border: 2px solid #ff8fa3;
-    margin-left: 8px;
+    margin-left: 6px;
     padding: 0 4px;
 }
 

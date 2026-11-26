@@ -8,14 +8,14 @@
         "hyprland/workspaces",
         "clock",
         "group/system",
-        "custom/updates",
-        "mpris",
         "custom/cava"
     ],
     "modules-center": [
         "hyprland/window"
     ],
     "modules-right": [
+        "mpris",
+        "custom/updates",
         "tray",
         "group/toggles",
         "group/connectivity",
@@ -80,8 +80,8 @@
         "format": "{icon} {percent}%",
         "format-icons": ["󰃞", "󰃟", "󰃠"],
         "tooltip-format": "Brightness: {percent}%",
-        "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
-        "on-scroll-down": "brightnessctl -e4 -n2 set 5%-"
+        "on-scroll-up": "brightnessctl -e4 -n2 set 5%+; quickshell -c shell ipc call osd brightness",
+        "on-scroll-down": "brightnessctl -e4 -n2 set 5%-; quickshell -c shell ipc call osd brightness"
     },
 
     "power-profiles-daemon": {
@@ -128,9 +128,9 @@
         "tooltip-format": "Temperature: {temperatureC}°C"
     },
     "mpris": {
-        "format": "{status_icon} | {dynamic}",
+        "format": "{status_icon}  {dynamic}",
         "interval": 1,
-        "dynamic-len": 20,
+        "dynamic-len": 28,
         "status-icons": {
             "playing": "▶",
             "paused": "⏸",
@@ -140,16 +140,17 @@
         "tooltip-format": "{title} - {artist}\n{album}\n{position}/{length}"
     },
     "clock": {
-        "format": "{:%H:%M - %d %b %y}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+        "format": "{:%H:%M · %a %d %b}",
+        "tooltip-format": "<big>{:%A %d %B %Y}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "network": {
         "interval": 5,
-        "format-wifi": "  {essid}",
+        "format-wifi": "{icon}",
+        "format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
         "format-ethernet": "󰈀  {ifname}",
-        "format-disconnected": "  Disconnected",
-        "tooltip-format-wifi": "Signal: {signalStrength}%\nFrequency: {frequency} GHz\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
+        "format-disconnected": "󰤭",
+        "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}%\nFrequency: {frequency} GHz\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
         "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
         "tooltip-format-disconnected": "No connection",
         "on-click": "~/.config/waybar/scripts/wifi-menu.sh"
@@ -205,9 +206,6 @@
     "hyprland/window": {
         "format": "{}",
         "separate-outputs": true,
-        "rewrite": {
-            "": ""
-        },
-        "max-length": 50
+        "max-length": 40
     }
 }
