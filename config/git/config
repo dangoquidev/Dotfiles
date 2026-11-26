@@ -18,7 +18,7 @@
     insteadOf           = "gh:"
 
 [init]
-    defaultBranch       = prod
+	defaultBranch = main
 
 [status]
     branch              = true
@@ -85,7 +85,6 @@
     remote              = yellow
     upstream            = green
     plain               = blue
-[user]
-	name = Alexandre Pereira De Almeida
-	email = 91562207+dangoquidev@users.noreply.github.com
-	signingkey = 538FF676161FA3BE
+# Identité (nom, email, clé GPG) dans un fichier local non versionné
+[include]
+	path = ~/.gitconfig.local
