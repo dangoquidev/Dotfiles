@@ -1,5 +1,5 @@
-# Manifest des symlinks : <groupe>  <chemin dans le repo>  <cible relative à $HOME>
-# Un dossier entier ou un seul fichier peut être lié.
+# Symlink manifest: <group>  <path in repo>  <target relative to $HOME>
+# A whole directory or a single file can be linked.
 
 hypr        config/hypr                         .config/hypr
 waybar      config/waybar                       .config/waybar

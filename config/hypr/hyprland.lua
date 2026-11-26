@@ -1,5 +1,5 @@
--- Config Hyprland (Lua, >= 0.57) — convertie depuis conf/*.conf
--- Modules dans lua/, chargés dans l ordre ci-dessous.
+-- Config Hyprland (Lua, >= 0.57) — converted from the old conf/*.conf
+-- Modules live in lua/ and are loaded in the order below.
 
 require("lua.monitors")
 require("lua.autostart")

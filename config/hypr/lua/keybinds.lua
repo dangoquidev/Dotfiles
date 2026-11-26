@@ -10,11 +10,11 @@ hl.bind(key(mainMod, "E"), exec(p.fileManager))
 hl.bind(key(mainMod, "V"), hl.dsp.window.float({ action = "toggle" }))
 hl.bind(key(mainMod, "A"), exec(p.menu))
 
--- Super P — sélection → clipboard
+-- Super P — area → clipboard
 hl.bind("SUPER + P", exec([[grim -g "$(slurp -d)" - | wl-copy]]))
--- Super Shift P — sélection → clipboard + swappy
+-- Super Shift P — area → clipboard + swappy
 hl.bind("SUPER + SHIFT + P", exec([[grim -g "$(slurp -d)" - | tee /tmp/screenshot.png | wl-copy && swappy -f /tmp/screenshot.png]]))
--- Super Ctrl P — sélection → sauvegarde (+ clipboard)
+-- Super Ctrl P — area → saved file (+ clipboard)
 hl.bind("SUPER + CTRL + P", exec([[mkdir -p ~/Pictures/Screenshots && grim -g "$(slurp -d)" - | tee ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy]]))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
 

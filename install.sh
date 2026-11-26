@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Gestionnaire de dotfiles à base de symlinks (manifest : links.txt)
+# Symlink-based dotfiles manager (manifest: links.txt)
 #
-#   ./install.sh                     menu interactif (whiptail) ou tout installer
-#   ./install.sh install [groupe…]   crée les liens (tous les groupes par défaut)
-#   ./install.sh uninstall [groupe…] supprime les liens et restaure les backups
-#   ./install.sh status              état de chaque lien
-#   -n / --dry-run                   affiche sans rien modifier
+#   ./install.sh                     interactive menu (whiptail), or install everything
+#   ./install.sh install [group…]    create links (all groups by default)
+#   ./install.sh uninstall [group…]  remove links and restore backups
+#   ./install.sh status              state of every link
+#   -n / --dry-run                   show what would happen, change nothing
 
 set -euo pipefail
 
@@ -22,7 +22,7 @@ err()  { echo -e "${R}  ✗${N} $*" >&2; }
 run()  { if $DRY_RUN; then echo "  [dry-run] $*"; else "$@"; fi; }
 
 # --- manifest ---------------------------------------------------------------
-entries() {  # imprime "groupe src dest" pour les groupes demandés
+entries() {  # print "group src dest" for the requested groups
     local want=" $* "
     grep -vE '^\s*(#|$)' "$MANIFEST" | while read -r group src dest; do
         if [[ $# -eq 0 || "$want" == *" $group "* ]]; then
@@ -35,7 +35,7 @@ all_groups() { grep -vE '^\s*(#|$)' "$MANIFEST" | awk '{print $1}' | uniq; }
 check_groups() {
     local g known; known=" $(all_groups | tr '\n' ' ') "
     for g in "$@"; do
-        [[ "$known" == *" $g "* ]] || { err "groupe inconnu : $g (dispo : $known)"; exit 1; }
+        [[ "$known" == *" $g "* ]] || { err "unknown group: $g (available: $known)"; exit 1; }
     done
 }
 
@@ -44,7 +44,7 @@ pre_hook() {
     case "$1" in
         spicetify)
             if [[ -d /opt/spotify && ! -w /opt/spotify ]]; then
-                warn "spicetify : droits d'écriture sur /opt/spotify (sudo)"
+                warn "spicetify: granting write access to /opt/spotify (sudo)"
                 run sudo chmod a+wr /opt/spotify
                 run sudo chmod -R a+wr /opt/spotify/Apps
             fi ;;
@@ -55,20 +55,20 @@ post_hook() {
     case "$1" in
         fish)
             if command -v fish >/dev/null; then
-                info "fish : fisher + plugins (fish_plugins)"
+                info "fish: fisher + plugins (fish_plugins)"
                 run fish -c 'functions -q fisher; or begin
                     curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
                     and fisher install jorgebucaran/fisher
-                end; fisher update' || warn "fisher update a échoué"
+                end; fisher update' || warn "fisher update failed"
             fi ;;
         spicetify)
             if command -v spicetify >/dev/null; then
-                info "spicetify : apply"
-                run spicetify apply || run spicetify backup apply || warn "spicetify apply a échoué"
+                info "spicetify: apply"
+                run spicetify apply || run spicetify backup apply || warn "spicetify apply failed"
             fi ;;
         hypr)
             if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-                run hyprctl reload >/dev/null && ok "hyprland rechargé"
+                run hyprctl reload >/dev/null && ok "hyprland reloaded"
             fi ;;
     esac
 }
@@ -77,10 +77,10 @@ post_hook() {
 link_one() {
     local src="$1" dest="$2" backup_dir="$3"
 
-    [[ -e "$src" ]] || { err "source absente : $src"; return; }
+    [[ -e "$src" ]] || { err "missing source: $src"; return; }
 
     if [[ -L "$dest" && "$(readlink -f "$dest")" == "$(readlink -f "$src")" ]]; then
-        ok "${dest/#$HOME/\~} (déjà lié)"
+        ok "${dest/#$HOME/\~} (already linked)"
         return
     fi
 
@@ -90,7 +90,7 @@ link_one() {
         local bak="$backup_dir/${dest#$HOME/}"
         run mkdir -p "$(dirname "$bak")"
         run mv "$dest" "$bak"
-        warn "backup : ${dest/#$HOME/\~} → ${bak/#$HOME/\~}"
+        warn "backup: ${dest/#$HOME/\~} → ${bak/#$HOME/\~}"
     fi
 
     run mkdir -p "$(dirname "$dest")"
@@ -109,7 +109,7 @@ do_install() {
         while read -r group src dest; do link_one "$src" "$dest" "$backup_dir"; done < <(entries "$g")
         post_hook "$g"
     done
-    [[ -d "$backup_dir" ]] && info "anciens fichiers sauvegardés dans ${backup_dir/#$HOME/\~}"
+    [[ -d "$backup_dir" ]] && info "previous files backed up to ${backup_dir/#$HOME/\~}"
     return 0
 }
 
@@ -120,13 +120,13 @@ do_uninstall() {
         if [[ -L "$dest" && "$(readlink -f "$dest")" == "$(readlink -f "$src")" ]]; then
             run rm "$dest"
             rel="${dest#$HOME/}"
-            # restaure le backup le plus récent qui contient ce chemin
+            # restore the most recent backup that contains this path
             latest="$(ls -1d "$BACKUP_ROOT"/*/"$rel" 2>/dev/null | sort | tail -n1 || true)"
             if [[ -n "$latest" ]]; then
                 run mv "$latest" "$dest"
-                ok "${dest/#$HOME/\~} restauré"
+                ok "${dest/#$HOME/\~} restored"
             else
-                ok "${dest/#$HOME/\~} délié (pas de backup)"
+                ok "${dest/#$HOME/\~} unlinked (no backup)"
             fi
         fi
     done < <(entries "$@")
@@ -141,7 +141,7 @@ do_status() {
         elif [[ -L "$dest" ]]; then
             echo -e "${Y}other  ${N} [$group] $d → $(readlink "$dest")"
         elif [[ -e "$dest" ]]; then
-            echo -e "${Y}exists ${N} [$group] $d (fichier local, non lié)"
+            echo -e "${Y}exists ${N} [$group] $d (local file, not linked)"
         else
             echo -e "${R}missing${N} [$group] $d"
         fi
@@ -153,7 +153,7 @@ menu() {
     local opts=() g
     for g in $(all_groups); do opts+=("$g" "" ON); done
     local sel
-    sel=$(whiptail --title "Dotfiles" --checklist "ESPACE pour cocher, ENTRÉE pour valider" \
+    sel=$(whiptail --title "Dotfiles" --checklist "SPACE to toggle, ENTER to confirm" \
         20 60 12 "${opts[@]}" 3>&1 1>&2 2>&3) || exit 0
     # shellcheck disable=SC2086
     do_install ${sel//\"/}
@@ -175,5 +175,5 @@ case "${1:-}" in
     install)     shift; do_install "$@" ;;
     uninstall)   shift; do_uninstall "$@" ;;
     status)      do_status ;;
-    *)           err "commande inconnue : $1"; exit 1 ;;
+    *)           err "unknown command: $1"; exit 1 ;;
 esac

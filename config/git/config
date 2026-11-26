@@ -85,6 +85,6 @@
     remote              = yellow
     upstream            = green
     plain               = blue
-# Identité (nom, email, clé GPG) dans un fichier local non versionné
+# Identity (name, email, GPG key) lives in an untracked local file
 [include]
 	path = ~/.gitconfig.local
