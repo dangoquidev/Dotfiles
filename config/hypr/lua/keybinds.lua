@@ -25,6 +25,7 @@ hl.bind("SUPER + SHIFT + V", exec([[cliphist list | rofi -dmenu -i -p Clipboard 
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
 
 hl.bind(key(mainMod, "B"), exec(p.browser))
+hl.bind(key(mainMod, "SHIFT + B"), exec("~/.config/hypr/scripts/wallpaper.sh"))
 hl.bind(key(mainMod, "C"), exec("hyprpicker -a"))
 hl.bind(key(mainMod, "L"), exec("loginctl lock-session"))
 hl.bind(key(mainMod, "W"), exec("~/.config/waybar/scripts/wifi-menu.sh"))

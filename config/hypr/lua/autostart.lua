@@ -15,6 +15,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-size 24")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'")
     hl.exec_cmd("awww-daemon")
-    -- wait (max ~3s) for the daemon to answer instead of a blind sleep
-    hl.exec_cmd("for i in $(seq 60); do awww query >/dev/null 2>&1 && break; sleep 0.05; done; awww img " .. p.wallpaper)
+    -- last wallpaper (or the default) + lockscreen image, once the daemon answers
+    hl.exec_cmd("~/.config/hypr/scripts/wallpaper.sh --restore")
 end)
