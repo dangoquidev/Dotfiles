@@ -20,6 +20,13 @@ dunst
 libnotify
 cava
 
+# --- Input methods (SUPER+Space: US intl / AZERTY / pinyin)
+fcitx5
+fcitx5-chinese-addons
+fcitx5-gtk
+fcitx5-qt
+fcitx5-configtool
+
 # --- Terminal & shell
 kitty
 fish

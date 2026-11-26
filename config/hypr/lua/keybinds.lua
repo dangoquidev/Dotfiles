@@ -22,6 +22,8 @@ hl.bind("Print", exec("~/.config/hypr/scripts/screenshot.sh"))
 hl.bind("SHIFT + Print", exec("~/.config/hypr/scripts/screenshot.sh window"))
 -- Super Shift V — clipboard history (cliphist)
 hl.bind("SUPER + SHIFT + V", exec([[cliphist list | rofi -dmenu -i -p Clipboard -display-columns 2 -theme ~/.config/rofi/theme.rasi | cliphist decode | wl-copy]]))
+-- Super Space — keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), dunst shows the new one
+hl.bind(key(mainMod, "space"), exec("~/.config/hypr/scripts/keyboard-layout.sh"))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
 
 hl.bind(key(mainMod, "B"), exec(p.browser))

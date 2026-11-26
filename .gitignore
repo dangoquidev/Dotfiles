@@ -15,3 +15,6 @@ config/fish/functions/fisher.fish
 config/fish/conf.d/_tide_init.fish
 config/fish/completions/tide.fish
 config/fish/completions/fisher.fish
+
+# fcitx5 regenerates this cache itself
+config/fcitx5/conf/cached_layouts

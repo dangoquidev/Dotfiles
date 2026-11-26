@@ -1,0 +1,29 @@
+# Switching is done by Hyprland (SUPER+Space → keyboard-layout.sh),
+# so fcitx5's own hotkeys are cleared (no Ctrl+Space toggle).
+[Hotkey]
+EnumerateWithTriggerKeys=False
+EnumerateSkipFirst=False
+
+[Hotkey/TriggerKeys]
+
+[Hotkey/AltTriggerKeys]
+
+[Hotkey/EnumerateForwardKeys]
+
+[Hotkey/EnumerateBackwardKeys]
+
+[Hotkey/EnumerateGroupForwardKeys]
+
+[Hotkey/EnumerateGroupBackwardKeys]
+
+[Hotkey/ActivateKeys]
+
+[Hotkey/DeactivateKeys]
+
+[Behavior]
+# one input method for every window, not per-window
+ShareInputState=All
+ActiveByDefault=False
+# the dunst notification replaces fcitx5's own popup
+ShowInputMethodInformation=False
+ShowInputMethodInformationWhenFocusIn=False

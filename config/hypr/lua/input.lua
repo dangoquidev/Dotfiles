@@ -1,7 +1,7 @@
 hl.config({
     input = {
-        kb_layout  = "us",   -- "fr"
-        kb_variant = "intl",
+        kb_layout  = "us,fr",   -- index 0/1, switched by SUPER+Space (keyboard-layout.sh)
+        kb_variant = "intl,",
         kb_model   = "",
         kb_options = "",
         kb_rules   = "",
