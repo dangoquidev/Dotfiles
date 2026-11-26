@@ -24,10 +24,10 @@ EnumerateSkipFirst=False
 # one input method for every window, not per-window
 ShareInputState=All
 ActiveByDefault=False
-# the dunst notification replaces fcitx5's own popup
+# the Quickshell OSD pill (keyboard-layout.sh) replaces fcitx5's own popup
 ShowInputMethodInformation=False
 ShowInputMethodInformationWhenFocusIn=False
 
-# no tray icon in waybar: the dunst notification on SUPER+Space is enough
+# no tray icon in waybar: the OSD pill on SUPER+Space is enough
 [Behavior/DisabledAddons]
 0=notificationitem

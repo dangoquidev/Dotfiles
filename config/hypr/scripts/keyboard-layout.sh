@@ -11,9 +11,12 @@ ims=(keyboard-us-intl keyboard-fr pinyin)
 labels=("English (US intl)" "Français (AZERTY)" "中文 (Pinyin)")
 xkb=(0 1 0)
 
+# show the new keyboard in the Quickshell OSD pill (config/quickshell/shell/Osd.qml),
+# dunst notification if Quickshell isn't running
 notify() {
+    quickshell -c shell ipc call osd keyboard "$1" >/dev/null 2>&1 && return
     notify-send -a Keyboard -u low -t 1500 -i input-keyboard-symbolic \
-        -h string:x-dunst-stack-tag:keyboard "$@"
+        -h string:x-dunst-stack-tag:keyboard "Clavier actuel : $1" "${2:-}"
 }
 
 # active xkb layout index of the main keyboard
@@ -32,10 +35,10 @@ if command -v fcitx5 >/dev/null; then
     next=$(( (i + 1) % ${#ims[@]} ))
     fcitx5-remote -s "${ims[next]}"
     hyprctl switchxkblayout all "${xkb[next]}" >/dev/null
-    notify "Clavier actuel : ${labels[next]}"
+    notify "${labels[next]}"
 else
     cur=$(xkb_index)
     next=$(( ${cur:-0} == 0 ? 1 : 0 ))
     hyprctl switchxkblayout all "$next" >/dev/null
-    notify "Clavier actuel : ${labels[next]}" "fcitx5 absent : pas de pinyin"
+    notify "${labels[next]}" "fcitx5 absent : pas de pinyin"
 fi

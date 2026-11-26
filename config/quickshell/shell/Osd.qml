@@ -1,6 +1,7 @@
-// Volume / microphone / brightness on-screen display: a small pill at the bottom of the screen.
+// Volume / microphone / brightness / keyboard on-screen display: a small pill at the bottom of the screen.
 //   volume, mute, mic mute: followed live through PipeWire (keys, waybar scroll, pavucontrol…)
 //   brightness: shown by `quickshell -c shell ipc call osd brightness` (brightness keys, waybar scroll)
+//   keyboard:   `quickshell -c shell ipc call osd keyboard "<name>"` (SUPER+Space, keyboard-layout.sh)
 // Click-through, hides itself after a moment.
 
 import QtQuick
@@ -22,6 +23,7 @@ Scope {
     property string icon: ""
     property real value: 0          // 0..1 (can go above 1 for volume boost)
     property bool off: false        // muted
+    property string label: ""       // text mode (keyboard): replaces the bar and percentage
     property bool shown: false
 
     // ignore the burst of PipeWire "changes" while the shell starts
@@ -35,6 +37,15 @@ Scope {
         osd.icon = icon;
         osd.value = value;
         osd.off = off;
+        osd.label = "";
+        osd.shown = true;
+        hideTimer.restart();
+    }
+
+    function showText(icon, text) {
+        osd.icon = icon;
+        osd.off = false;
+        osd.label = text;
         osd.shown = true;
         hideTimer.restart();
     }
@@ -83,6 +94,7 @@ Scope {
         target: "osd"
         function brightness(): void { brightnessProc.running = true; }
         function volume(): void { osd.showVolume(); }
+        function keyboard(name: string): void { osd.showText("󰌌", name); }
     }
 
     // --- the pill --------------------------------------------------------------
@@ -129,8 +141,22 @@ Scope {
                     horizontalAlignment: Text.AlignHCenter
                 }
 
+                // keyboard name (text mode)
+                Text {
+                    visible: osd.label !== ""
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - 26 - parent.spacing
+                    text: osd.label
+                    color: osd.text
+                    font.family: "Maple Mono NF CN"
+                    font.pixelSize: 16
+                    font.bold: true
+                    elide: Text.ElideRight
+                }
+
                 // bar
                 Rectangle {
+                    visible: osd.label === ""
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width - 26 - 52 - 2 * parent.spacing
                     height: 8
@@ -145,6 +171,7 @@ Scope {
                 }
 
                 Text {
+                    visible: osd.label === ""
                     anchors.verticalCenter: parent.verticalCenter
                     width: 52
                     text: osd.off ? "muted" : Math.round(osd.value * 100) + "%"

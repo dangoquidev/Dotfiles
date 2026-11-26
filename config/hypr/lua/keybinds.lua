@@ -24,7 +24,7 @@ hl.bind("SHIFT + Print", exec("~/.config/hypr/scripts/screenshot.sh window"))
 hl.bind("SUPER + SHIFT + V", exec("quickshell -c shell ipc call clipboard toggle"))
 -- Super . — emoji picker (Quickshell): copies the emoji and types it with wtype
 hl.bind("SUPER + period", exec("quickshell -c shell ipc call emoji toggle"))
--- Super Space — keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), dunst shows the new one
+-- Super Space — keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), the OSD pill shows the new one
 hl.bind(key(mainMod, "space"), exec("~/.config/hypr/scripts/keyboard-layout.sh"))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
 
