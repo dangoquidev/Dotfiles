@@ -3,7 +3,7 @@ if status is-interactive
 end
 
 alias gs="git status --short"
-alias gd="git diff --output-indicator-new' ' --output-indicator-old=' '"
+alias gd="git diff --output-indicator-new=' ' --output-indicator-old=' '"
 alias gds="git diff --staged"
 alias ga="git add"
 alias gap="git add --patch"
