@@ -17,7 +17,9 @@ hl.bind("SUPER + SHIFT + P", exec([[grim -g "$(slurp -d)" - | tee /tmp/screensho
 -- Super Ctrl P — area → saved file (+ clipboard)
 hl.bind("SUPER + CTRL + P", exec([[mkdir -p ~/Pictures/Screenshots && grim -g "$(slurp -d)" - | tee ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy]]))
 -- Print — full screen → saved file + clipboard
-hl.bind("Print", exec([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | tee "$f" | wl-copy && notify-send -a Screenshot -i "$f" Screenshot "Saved and copied"]]))
+hl.bind("Print", exec("~/.config/hypr/scripts/screenshot.sh"))
+-- Shift Print — active window → saved file + clipboard
+hl.bind("SHIFT + Print", exec("~/.config/hypr/scripts/screenshot.sh window"))
 -- Super Shift V — clipboard history (cliphist)
 hl.bind("SUPER + SHIFT + V", exec([[cliphist list | rofi -dmenu -i -p Clipboard -display-columns 2 -theme ~/.config/rofi/theme.rasi | cliphist decode | wl-copy]]))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
