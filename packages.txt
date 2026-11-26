@@ -1,0 +1,58 @@
+# Packages the rice needs — installed by `./install.sh packages`
+# (yay installs everything; without yay, pacman installs the repo ones and AUR ones are listed)
+
+# --- Hyprland session
+hyprland
+hyprlock
+hypridle
+hyprpicker
+hyprpolkitagent
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+awww
+
+# --- Bar, launcher, notifications
+waybar
+rofi
+dunst
+libnotify
+cava
+
+# --- Terminal & shell
+kitty
+fish
+fastfetch
+git
+curl
+
+# --- Screenshots & clipboard
+grim
+slurp
+swappy
+wl-clipboard
+cliphist
+
+# --- Hardware: audio, network, brightness, media keys
+pipewire
+pipewire-pulse
+wireplumber
+networkmanager
+iwd
+brightnessctl
+playerctl
+
+# --- Apps
+thunar
+zen-browser-bin
+spotify
+spicetify-cli
+vesktop-bin
+
+# --- Theme & fonts (cursor: see README)
+ttf-hack-nerd
+catppuccin-gtk-theme-mocha
+adwaita-icon-theme
+nwg-look
+
+# --- install.sh menu
+libnewt

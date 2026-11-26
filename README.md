@@ -65,14 +65,15 @@ Heavily inspired by the amazing [HyDE Project](https://github.com/HyDE-Project/H
 
 ```
 Dotfiles/
-├── install.sh        # symlink manager (install / uninstall / status)
+├── install.sh        # symlink manager (install / uninstall / status / packages)
 ├── links.txt         # what gets linked where
+├── packages.txt      # packages the rice needs
 ├── assets/           # README screenshots
 └── config/           # one folder per app, mirrored into ~/.config
-    ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, wallpapers
+    ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, hypridle, wallpapers
     ├── waybar/       #   bar config, style, scripts (cava, wifi-menu, power-menu)
     ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
-    ├── gtk-3.0/  gtk-4.0/  nwg-look/  xsettingsd/  xdg-desktop-portal/
+    ├── gtk-3.0/  gtk-4.0/  nwg-look/  xdg-desktop-portal/
     ├── spicetify/  vesktop/
     └── git/          #   no identity inside, see "Git identity" below
 ```
@@ -82,11 +83,7 @@ Dotfiles/
 ## Dependencies
 
 ```bash
-yay -S --needed hyprland hyprlock hyprpicker awww waybar rofi kitty fish fastfetch \
-    dunst libnotify cava thunar zen-browser-bin spotify spicetify-cli vesktop-bin \
-    grim slurp swappy wl-clipboard brightnessctl playerctl wireplumber networkmanager \
-    ttf-hack-nerd catppuccin-gtk-theme-mocha nwg-look xsettingsd \
-    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk newt
+./install.sh packages   # yay -S --needed everything in packages.txt
 ```
 
 The Catppuccin Mocha Pink cursor comes from the [catppuccin/cursors releases](https://github.com/catppuccin/cursors/releases).
@@ -101,6 +98,7 @@ cd ~/Dotfiles
 ./install.sh                       # interactive menu (whiptail), or install everything
 ./install.sh install hypr waybar   # only some groups
 ./install.sh status                # state of every link
+./install.sh packages              # install the packages from packages.txt
 ./install.sh -n install            # dry-run, changes nothing
 ./install.sh uninstall [group…]    # remove links and restore backups
 ```
@@ -144,6 +142,7 @@ cd ~/Dotfiles
 | `SUPER + E` | File manager (thunar) |
 | `SUPER + Q` | Close window |
 | `SUPER + V` | Toggle floating |
+| `SUPER + SHIFT + V` | Clipboard history (cliphist) |
 | `SUPER + L` | Lock screen |
 | `SUPER + M` | Exit Hyprland |
 | `SUPER + Escape` | Power menu (lock, suspend, log out, reboot, shut down) |
@@ -151,6 +150,7 @@ cd ~/Dotfiles
 | `SUPER + P` | Screenshot area → clipboard |
 | `SUPER + SHIFT + P` | Screenshot area → swappy |
 | `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
+| `Print` | Screenshot full screen → `~/Pictures/Screenshots` + clipboard |
 | `SUPER + W` | Wi-Fi menu |
 | `SUPER + SHIFT + W` | Reload waybar |
 | `SUPER + ←↑→↓` | Move focus |
@@ -162,6 +162,17 @@ cd ~/Dotfiles
 | `SUPER + S` / `SUPER + SHIFT + S` | Toggle / send to scratchpad |
 | `SUPER + LMB / RMB` | Drag / resize window |
 | 3-finger swipe | Switch workspace |
+
+### Idle (hypridle)
+
+| After | Action |
+|-------|--------|
+| 2 min 30 | Dim the screen |
+| 5 min | Lock |
+| 5 min 30 | Screen off |
+| 30 min | Suspend |
+
+The session is always locked before a suspend (lid, power menu, idle). Timeouts live in `config/hypr/hypridle.conf`.
 
 ---
 

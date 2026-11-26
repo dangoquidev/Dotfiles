@@ -5,12 +5,14 @@
 #   ./install.sh install [group…]    create links (all groups by default)
 #   ./install.sh uninstall [group…]  remove links and restore backups
 #   ./install.sh status              state of every link
+#   ./install.sh packages            install the packages from packages.txt
 #   -n / --dry-run                   show what would happen, change nothing
 
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MANIFEST="$DOTFILES/links.txt"
+PACKAGES="$DOTFILES/packages.txt"
 BACKUP_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backup"
 DRY_RUN=false
 
@@ -54,6 +56,9 @@ pre_hook() {
 post_hook() {
     case "$1" in
         fish)
+            # keep tide's per-shell prompt cache out of git (see .gitattributes)
+            run git -C "$DOTFILES" config filter.fish-vars.clean "sed '/^SETUVAR _tide_prompt_/d'"
+            run git -C "$DOTFILES" config filter.fish-vars.smudge cat
             if command -v fish >/dev/null; then
                 info "fish: fisher + plugins (fish_plugins)"
                 run fish -c 'functions -q fisher; or begin
@@ -148,6 +153,24 @@ do_status() {
     done < <(entries)
 }
 
+do_packages() {
+    local pkgs=() repo=() aur=() p
+    mapfile -t pkgs < <(grep -vE '^\s*(#|$)' "$PACKAGES" | awk '{print $1}')
+    if command -v yay >/dev/null; then
+        info "yay: ${#pkgs[@]} packages"
+        run yay -S --needed "${pkgs[@]}"
+        return
+    fi
+    for p in "${pkgs[@]}"; do
+        if pacman -Si "$p" >/dev/null 2>&1; then repo+=("$p"); else aur+=("$p"); fi
+    done
+    info "pacman: ${#repo[@]} packages"
+    run sudo pacman -S --needed "${repo[@]}"
+    if [[ ${#aur[@]} -gt 0 ]]; then
+        warn "not in the repos (AUR), install them with an AUR helper: ${aur[*]}"
+    fi
+}
+
 menu() {
     command -v whiptail >/dev/null || { do_install; return; }
     local opts=() g
@@ -164,7 +187,7 @@ args=()
 for a in "$@"; do
     case "$a" in
         -n|--dry-run) DRY_RUN=true ;;
-        -h|--help)    sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)    sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *)            args+=("$a") ;;
     esac
 done
@@ -175,5 +198,6 @@ case "${1:-}" in
     install)     shift; do_install "$@" ;;
     uninstall)   shift; do_uninstall "$@" ;;
     status)      do_status ;;
+    packages)    do_packages ;;
     *)           err "unknown command: $1"; exit 1 ;;
 esac

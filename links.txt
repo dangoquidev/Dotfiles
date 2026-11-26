@@ -15,5 +15,4 @@ vesktop     config/vesktop/themes               .config/vesktop/themes
 gtk         config/gtk-3.0/settings.ini         .config/gtk-3.0/settings.ini
 gtk         config/gtk-4.0/settings.ini         .config/gtk-4.0/settings.ini
 gtk         config/nwg-look                     .config/nwg-look
-gtk         config/xsettingsd                   .config/xsettingsd
 portal      config/xdg-desktop-portal           .config/xdg-desktop-portal

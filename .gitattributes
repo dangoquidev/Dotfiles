@@ -1,0 +1,2 @@
+# tide rewrites a per-shell prompt cache (_tide_prompt_<pid>) on every new shell: keep it out of git
+config/fish/fish_variables filter=fish-vars
