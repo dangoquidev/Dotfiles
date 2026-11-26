@@ -154,7 +154,7 @@ cd ~/Dotfiles
 | `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
 | `Print` | Screenshot full screen → `~/Pictures/Screenshots` + clipboard |
 | `SHIFT + Print` | Screenshot active window → `~/Pictures/Screenshots` + clipboard |
-| `SUPER + Space` | Switch keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), notification shows the current one |
+| `SUPER + Space` | Switch keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), the OSD pill shows the current one |
 | `SUPER + W` | Wi-Fi menu |
 | `SUPER + SHIFT + W` | Reload waybar |
 | `SUPER + N` | Night light on / off (hyprsunset) |
@@ -214,7 +214,9 @@ Color emoji come from Noto Color Emoji. Korean isn't covered.
 - **Night light** (hyprsunset): warm screen (4000 K) from 20:30 to 7:00, schedule in `config/hypr/hyprsunset.conf`.
 - **Low battery**: notification at 15 %, critical one at 5 % (`config/hypr/scripts/battery-notify.sh`).
 - **Clipboard history**: cliphist records text and images; `SUPER + SHIFT + V` opens a Quickshell panel with image previews.
-- **OSD**: a small pill at the bottom shows volume, mic mute and brightness changes (Quickshell, follows PipeWire live).
+- **OSD**: a small pill at the bottom shows volume, mic mute, brightness and keyboard changes (Quickshell, follows PipeWire live).
+- **Lock screen**: the current keyboard layout (US intl / AZERTY) is shown under the password field.
+- **Wallpaper previews**: carousel previews of deleted images are cleaned up at login and when the carousel opens.
 
 ---
 
