@@ -16,3 +16,4 @@ gtk         config/gtk-3.0/settings.ini         .config/gtk-3.0/settings.ini
 gtk         config/gtk-4.0/settings.ini         .config/gtk-4.0/settings.ini
 gtk         config/nwg-look                     .config/nwg-look
 portal      config/xdg-desktop-portal           .config/xdg-desktop-portal
+quickshell  config/quickshell                    .config/quickshell
