@@ -23,6 +23,7 @@ hl.bind(key(mainMod, "C"), exec("hyprpicker -a"))
 hl.bind(key(mainMod, "L"), exec("hyprlock"))
 hl.bind(key(mainMod, "W"), exec("~/.config/waybar/scripts/wifi-menu.sh"))
 hl.bind(key(mainMod, "SHIFT + W"), exec("pkill -SIGUSR2 waybar"))
+hl.bind(key(mainMod, "Escape"), exec("~/.config/waybar/scripts/power-menu.sh"))
 
 hl.bind(key(mainMod, "left"),  hl.dsp.focus({ direction = "left" }))
 hl.bind(key(mainMod, "right"), hl.dsp.focus({ direction = "right" }))

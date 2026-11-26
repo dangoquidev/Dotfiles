@@ -1,0 +1,85 @@
+/* Fullscreen power menu (waybar/scripts/power-menu.sh).
+ * The backdrop is translucent; Hyprland blurs what's behind it (layer rule in windowrules.lua). */
+
+configuration {
+    font: "Hack Nerd Font 13";
+    show-icons: false;
+    click-to-exit: true;
+}
+
+* {
+    c-accent:  #ffffff;
+    c-txt:     #DDD5C4;
+    c-bg:      #1a1a2a;
+    c-accent2: #ff8fa3;
+
+    background-color: transparent;
+    text-color:       @c-txt;
+    margin: 0px;
+    padding: 0px;
+}
+
+window {
+    transparency: "real";
+    fullscreen: true;
+    background-color: rgba(26, 26, 42, 0.45);
+}
+
+mainbox {
+    orientation: vertical;
+    children: [ "top", "inputbar", "listview", "bottom" ];
+    spacing: 30px;
+}
+
+top, bottom {
+    expand: true;
+}
+
+inputbar {
+    expand: false;
+    children: [ "pad-l", "prompt", "pad-r" ];
+}
+
+pad-l, pad-r {
+    expand: true;
+}
+
+prompt {
+    expand: false;
+    text-color: @c-accent;
+    font: "Hack Nerd Font Bold 16";
+}
+
+listview {
+    expand: false;
+    lines: 1;
+    layout: vertical;
+    fixed-columns: true;
+    fixed-height: true;
+    cycle: true;
+    scrollbar: false;
+    spacing: 24px;
+    padding: 0px 25%;
+}
+
+element {
+    orientation: vertical;
+    padding: 28px 10px;
+    background-color: rgba(26, 26, 42, 0.85);
+    border: 2px solid;
+    border-color: @c-bg;
+    cursor: pointer;
+}
+
+element-text {
+    font: "Hack Nerd Font 32";
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+    text-color: inherit;
+    cursor: inherit;
+}
+
+element selected.normal {
+    border-color: @c-accent2;
+    text-color: @c-accent2;
+}

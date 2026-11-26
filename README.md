@@ -70,7 +70,7 @@ Dotfiles/
 ├── assets/           # README screenshots
 └── config/           # one folder per app, mirrored into ~/.config
     ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, wallpapers
-    ├── waybar/       #   bar config, style, scripts (cava, wifi-menu)
+    ├── waybar/       #   bar config, style, scripts (cava, wifi-menu, power-menu)
     ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
     ├── gtk-3.0/  gtk-4.0/  nwg-look/  xsettingsd/  xdg-desktop-portal/
     ├── spicetify/  vesktop/
@@ -146,6 +146,7 @@ cd ~/Dotfiles
 | `SUPER + V` | Toggle floating |
 | `SUPER + L` | Lock screen |
 | `SUPER + M` | Exit Hyprland |
+| `SUPER + Escape` | Power menu (lock, suspend, log out, reboot, shut down) |
 | `SUPER + C` | Color picker |
 | `SUPER + P` | Screenshot area → clipboard |
 | `SUPER + SHIFT + P` | Screenshot area → swappy |
