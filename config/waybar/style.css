@@ -102,6 +102,10 @@ window#waybar.empty #window {
 }
 
 #network,
+#bluetooth,
+#backlight,
+#power-profiles-daemon,
+#custom-updates,
 #battery,
 #clock,
 #wireplumber {
@@ -111,7 +115,9 @@ window#waybar.empty #window {
     margin-left: 8px;
 }
 
-#network.disconnected {
+#network.disconnected,
+#bluetooth.off,
+#bluetooth.disabled {
     color: #666666;
 }
 
@@ -181,3 +187,49 @@ tooltip label {
     font-size: 12px;
     padding: 0 5px;
 }
+
+/* --- quick toggles: idle inhibitor, night light, do not disturb --- */
+#toggles {
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-left: 8px;
+    padding: 0 4px;
+}
+
+#idle_inhibitor,
+#custom-nightlight,
+#custom-dnd {
+    padding: 0 8px;
+    color: #6a6880;
+}
+
+#idle_inhibitor.activated,
+#custom-nightlight.on,
+#custom-dnd.on {
+    color: #ff8fa3;
+}
+
+#power-profiles-daemon.performance { color: #f7768e; }
+#power-profiles-daemon.power-saver { color: #b8f5c8; }
+
+#custom-updates.pending { color: #ffd1dc; }
+
+/* --- grouped boxes: one border around several modules --- */
+#system,
+#connectivity,
+#levels {
+    background: rgba(26, 26, 42, 0.85);
+    border: 2px solid #ff8fa3;
+    margin-left: 8px;
+    padding: 0 4px;
+}
+
+#system > widget > *,
+#connectivity > widget > *,
+#levels > widget > * {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0 8px;
+}
+

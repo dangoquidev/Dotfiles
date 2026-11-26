@@ -6,23 +6,94 @@
 
     "modules-left": [
         "hyprland/workspaces",
-        "cpu",
-        "memory",
-        "temperature",
-        "mpris"
+        "clock",
+        "group/system",
+        "custom/updates",
+        "mpris",
+        "custom/cava"
     ],
     "modules-center": [
         "hyprland/window"
     ],
     "modules-right": [
-        "custom/cava",
         "tray",
-        "network",
-        "wireplumber",
-        "clock",
+        "group/toggles",
+        "group/connectivity",
+        "group/levels",
         "battery",
         "custom/power"
     ],
+
+    "group/system": {
+        "orientation": "horizontal",
+        "modules": ["cpu", "memory", "temperature", "power-profiles-daemon"]
+    },
+
+    "group/connectivity": {
+        "orientation": "horizontal",
+        "modules": ["network", "bluetooth"]
+    },
+
+    "group/levels": {
+        "orientation": "horizontal",
+        "modules": ["wireplumber", "backlight"]
+    },
+
+    "group/toggles": {
+        "orientation": "horizontal",
+        "modules": ["idle_inhibitor", "custom/nightlight", "custom/dnd"]
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": { "activated": "󰅶", "deactivated": "󰾪" },
+        "tooltip-format-activated": "Staying awake (no auto lock / suspend)",
+        "tooltip-format-deactivated": "Auto lock / suspend enabled"
+    },
+
+    "custom/nightlight": {
+        "exec": "~/.config/waybar/scripts/nightlight.sh",
+        "return-type": "json",
+        "interval": 60,
+        "signal": 8,
+        "on-click": "~/.config/waybar/scripts/nightlight.sh toggle"
+    },
+
+    "custom/dnd": {
+        "exec": "~/.config/waybar/scripts/dnd.sh",
+        "return-type": "json",
+        "interval": 30,
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/dnd.sh toggle"
+    },
+
+    "custom/updates": {
+        "exec": "~/.config/waybar/scripts/updates.sh",
+        "exec-if": "command -v checkupdates",
+        "return-type": "json",
+        "interval": 1800,
+        "on-click": "kitty --title 'System update' sh -c 'yay -Syu; echo; read -p \"Done, press Enter to close\" _'; pkill -RTMIN+10 waybar",
+        "signal": 10
+    },
+
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
+        "tooltip-format": "Brightness: {percent}%",
+        "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
+        "on-scroll-down": "brightnessctl -e4 -n2 set 5%-"
+    },
+
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "format-icons": {
+            "default": "󰾅",
+            "performance": "󰓅",
+            "balanced": "󰾅",
+            "power-saver": "󰾆"
+        },
+        "tooltip-format": "Power profile: {profile}\nClick to switch"
+    },
     "custom/cava": {
         "exec": "~/.config/waybar/scripts/cava.sh",
         "exec-if": "pgrep -x spotify",
@@ -82,6 +153,20 @@
         "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}",
         "tooltip-format-disconnected": "No connection",
         "on-click": "~/.config/waybar/scripts/wifi-menu.sh"
+    },
+
+    "bluetooth": {
+        "format": "󰂯",
+        "format-disabled": "󰂲",
+        "format-off": "󰂲",
+        "format-connected": "󰂱 {device_alias}",
+        "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias} {device_battery_percentage}%",
+        "on-click": "blueman-manager",
+        "on-click-right": "bluetoothctl power $(bluetoothctl show | grep -q 'Powered: yes' && echo off || echo on)"
     },
 
     "battery": {
