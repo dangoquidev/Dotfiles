@@ -59,7 +59,8 @@ spicetify-cli
 vesktop-bin
 
 # --- Theme & fonts (cursor: see README)
-ttf-hack-nerd
+maplemono-nf-cn
+noto-fonts-emoji
 catppuccin-gtk-theme-mocha
 adwaita-icon-theme
 nwg-look

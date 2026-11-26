@@ -2,7 +2,7 @@
  * The backdrop is translucent; Hyprland blurs what's behind it (layer rule in windowrules.lua). */
 
 configuration {
-    font: "Hack Nerd Font 13";
+    font: "Maple Mono NF CN 13";
     show-icons: false;
     click-to-exit: true;
 }
@@ -47,7 +47,7 @@ pad-l, pad-r {
 prompt {
     expand: false;
     text-color: @c-accent;
-    font: "Hack Nerd Font Bold 16";
+    font: "Maple Mono NF CN Bold 16";
 }
 
 listview {
@@ -72,7 +72,7 @@ element {
 }
 
 element-text {
-    font: "Hack Nerd Font 32";
+    font: "Maple Mono NF CN 32";
     horizontal-align: 0.5;
     vertical-align: 0.5;
     text-color: inherit;

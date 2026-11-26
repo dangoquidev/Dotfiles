@@ -1,5 +1,5 @@
 configuration {
-    font: "Hack Nerd Font 13";
+    font: "Maple Mono NF CN 13";
     show-icons: true;
     display-drun: "Launch";
     drun-display-format: "{name}";
