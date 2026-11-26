@@ -150,6 +150,7 @@ cd ~/Dotfiles
 | `SUPER + P` | Screenshot area → clipboard |
 | `SUPER + SHIFT + P` | Screenshot area → swappy |
 | `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
+| `SUPER + W` | Wi-Fi menu |
 | `SUPER + SHIFT + W` | Reload waybar |
 | `SUPER + ←↑→↓` | Move focus |
 | `SUPER + SHIFT + ←↑→↓` | Resize window |

@@ -21,6 +21,7 @@ hl.bind("SUPER + CTRL + P", exec([[mkdir -p ~/Pictures/Screenshots && grim -g "$
 hl.bind(key(mainMod, "B"), exec(p.browser))
 hl.bind(key(mainMod, "C"), exec("hyprpicker -a"))
 hl.bind(key(mainMod, "L"), exec("hyprlock"))
+hl.bind(key(mainMod, "W"), exec("~/.config/waybar/scripts/wifi-menu.sh"))
 hl.bind(key(mainMod, "SHIFT + W"), exec("pkill -SIGUSR2 waybar"))
 
 hl.bind(key(mainMod, "left"),  hl.dsp.focus({ direction = "left" }))
