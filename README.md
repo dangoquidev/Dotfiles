@@ -186,5 +186,5 @@ cd ~/Dotfiles
 If you like this rice, consider giving it a star!
 
 <p align="center">
-  <img src="assets/support.jpg" width="450"/>
+  <img src="assets/support.jpg" width="100%"/>
 </p>
