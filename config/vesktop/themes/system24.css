@@ -83,24 +83,25 @@ body {
 
 /* color options */
 :root {
+    /* rice palette: base 1a1a2a, surface 252535, pink ff8fa3, text e0def4 (same as kitty/waybar/rofi) */
     --colors: on; /* off: discord default colors, on: midnight custom colors */
 
     /* text colors */
     --text-0: var(--bg-4); /* text on colored elements */
-    --text-1: oklch(95% 0 0); /* other normally white text */
-    --text-2: oklch(85% 0 0); /* headings and important text */
-    --text-3: oklch(75% 0 0); /* normal text */
-    --text-4: oklch(60% 0 0); /* icon buttons and channels */
-    --text-5: oklch(40% 0 0); /* muted channels/chats and timestamps */
+    --text-1: #f2f0fa; /* other normally white text */
+    --text-2: #e0def4; /* headings and important text */
+    --text-3: #c9c7dc; /* normal text */
+    --text-4: #a8a6c0; /* icon buttons and channels */
+    --text-5: #6a6880; /* muted channels/chats and timestamps */
 
     /* background and dark colors */
-    --bg-1: oklch(31% 0 0); /* dark buttons when clicked */
-    --bg-2: oklch(27% 0 0); /* dark buttons */
-    --bg-3: oklch(23% 0 0); /* spacing, secondary elements */
-    --bg-4: oklch(19% 0 0); /* main background color */
-    --hover: oklch(54% 0 0 / 0.1); /* channels and buttons when hovered */
-    --active: oklch(54% 0 0 / 0.2); /* channels and buttons when clicked or selected */
-    --active-2: oklch(54% 0 0 / 0.3); /* extra state for transparent buttons */
+    --bg-1: #3a3a4a; /* dark buttons when clicked */
+    --bg-2: #2a2a3a; /* dark buttons */
+    --bg-3: #252535; /* spacing, secondary elements */
+    --bg-4: #1a1a2a; /* main background color */
+    --hover: rgb(255 143 163 / 0.08); /* channels and buttons when hovered */
+    --active: rgb(255 143 163 / 0.16); /* channels and buttons when clicked or selected */
+    --active-2: rgb(255 143 163 / 0.24); /* extra state for transparent buttons */
     --message-hover: var(--hover); /* messages when hovered */
 
     /* accent colors */
@@ -126,17 +127,17 @@ body {
     --border-light: var(--hover); /* general light border color */
     --border: var(--active); /* general normal border color */
     --border-hover: var(--accent-2); /* border color of panels when hovered */
-    --button-border: hsl(220, 0%, 100%, 0.1); /* neutral border color of buttons */
+    --button-border: rgb(224 222 244 / 0.1); /* neutral border color of buttons */
 
     /* base colors */
-    --red-1: oklch(75% 0.13 0);
-    --red-2: oklch(70% 0.13 0);
-    --red-3: oklch(65% 0.13 0);
-    --red-4: oklch(60% 0.13 0);
-    --red-5: oklch(55% 0.13 0);
+    --red-1: #ffd1dc;
+    --red-2: #ffb3c1;
+    --red-3: #ff8fa3;
+    --red-4: #f7768e;
+    --red-5: #e85d78;
 
-    --green-1: oklch(75% 0.12 170);
-    --green-2: oklch(70% 0.12 170);
+    --green-1: #c8ffd8;
+    --green-2: #b8f5c8;
     --green-3: oklch(65% 0.12 170);
     --green-4: oklch(60% 0.12 170);
     --green-5: oklch(55% 0.12 160);

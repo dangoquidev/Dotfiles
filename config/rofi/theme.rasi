@@ -9,9 +9,9 @@ configuration {
 
 * {
     c-accent:  #ffffff;
-    c-txt:     #DDD5C4;
+    c-txt:     #e0def4;
     c-bg:      #1a1a2a;
-    c-bg2:     #3A372F;
+    c-bg2:     #3a3a4a;
     c-accent2: #ff8fa3;
 
     background-color: transparent;

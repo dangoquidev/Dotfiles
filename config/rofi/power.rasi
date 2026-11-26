@@ -9,7 +9,7 @@ configuration {
 
 * {
     c-accent:  #ffffff;
-    c-txt:     #DDD5C4;
+    c-txt:     #e0def4;
     c-bg:      #1a1a2a;
     c-accent2: #ff8fa3;
 
