@@ -7,6 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white"/>
   <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=for-the-badge&logo=wayland&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Lua-2C2D72?style=for-the-badge&logo=lua&logoColor=white"/>
 </p>
 
 <p align="center">
@@ -29,12 +30,10 @@
 
 ## About
 
-A carefully crafted **Hyprland** rice featuring a **dark and pink** color palette, inspired by:
+A **Hyprland** rice with a **dark & pink** palette, inspired by **Clannad** and **Catppuccin**,
+managed with plain symlinks so `~/.config` *is* this repo.
 
-- **Clannad**
-- **Gruvbox**
-
-This setup draws heavy inspiration from the amazing [HyDE Project](https://github.com/HyDE-Project/HyDE) and [DerAnsari's dots](https://github.com/DerAnsari/hyprland-dots).
+Heavily inspired by the amazing [HyDE Project](https://github.com/HyDE-Project/HyDE) and [DerAnsari's dots](https://github.com/DerAnsari/hyprland-dots).
 
 ---
 
@@ -42,55 +41,86 @@ This setup draws heavy inspiration from the amazing [HyDE Project](https://githu
 
 | Component | Name |
 |-----------|------|
-| **Window Manager** | [Hyprland](https://hyprland.org/) (config Lua, ≥ 0.57) |
-| **Display Manager** | SDDM |
-| **Color Scheme** | Dark Pink |
-| **Status Bar** | Waybar |
+| **Window Manager** | [Hyprland](https://hyprland.org/) — Lua config (≥ 0.57) |
+| **Lockscreen** | hyprlock |
+| **Status Bar** | Waybar (+ cava visualizer, rofi Wi-Fi menu) |
 | **Launcher** | Rofi |
-| **Browser** | Zen |
-| **Editor** | Visual Studio Code / Nano |
-| **Wallpaper** | awww |
 | **Notifications** | Dunst |
-| **Music** | Spotify + spicetify |
-| **Discord** | Vesktop |
+| **Wallpaper** | awww |
 | **Terminal** | Kitty |
-| **Shell** | Fish |
-| **Fetch** | Fastfetch |
+| **Shell** | Fish + [Tide](https://github.com/IlanCosman/tide) prompt |
+| **Fetch** | Fastfetch (random logo on each launch) |
+| **Font** | Hack Nerd Font |
+| **GTK / Cursor** | Catppuccin Mocha Pink |
+| **Music** | Spotify + Spicetify |
+| **Discord** | Vesktop (System24 theme) |
+| **Browser** | Zen |
 | **File Manager** | Thunar |
-| **Audio** | Pipewire |
+| **Display Manager** | SDDM *(config not included)* |
+| **Audio** | Pipewire / Wireplumber |
+
+---
+
+## Repository layout
+
+```
+Dotfiles/
+├── install.sh        # symlink manager (install / uninstall / status)
+├── links.txt         # what gets linked where
+├── assets/           # README screenshots
+└── config/           # one folder per app, mirrored into ~/.config
+    ├── hypr/         #   hyprland.lua + lua/ modules, hyprlock, wallpapers
+    ├── waybar/       #   bar config, style, scripts (cava, wifi-menu)
+    ├── fish/  kitty/  rofi/  fastfetch/  dunst/  cava/
+    ├── gtk-3.0/  gtk-4.0/  nwg-look/  xsettingsd/  xdg-desktop-portal/
+    ├── spicetify/  vesktop/
+    └── git/          #   no identity inside, see "Git identity" below
+```
+
+---
+
+## Dependencies
+
+```bash
+yay -S --needed hyprland hyprlock hyprpicker awww waybar rofi kitty fish fastfetch \
+    dunst libnotify cava thunar zen-browser-bin spotify spicetify-cli vesktop-bin \
+    grim slurp swappy wl-clipboard brightnessctl playerctl wireplumber networkmanager \
+    ttf-hack-nerd catppuccin-gtk-theme-mocha nwg-look xsettingsd \
+    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk newt
+```
+
+The Catppuccin Mocha Pink cursor comes from the [catppuccin/cursors releases](https://github.com/catppuccin/cursors/releases).
 
 ---
 
 ## Installation
 
-Every config lives in `config/` and is linked into `$HOME` with symlinks.
-The full list of links is in [`links.txt`](links.txt) (`group  repo-path  target`).
-
 ```bash
 git clone https://github.com/dangoquidev/Dotfiles.git ~/Dotfiles
 cd ~/Dotfiles
-./install.sh                 # interactive menu (whiptail), or install everything
+./install.sh                       # interactive menu (whiptail), or install everything
 ./install.sh install hypr waybar   # only some groups
-./install.sh status          # state of every link
-./install.sh -n install      # dry-run, changes nothing
+./install.sh status                # state of every link
+./install.sh -n install            # dry-run, changes nothing
 ./install.sh uninstall [group…]    # remove links and restore backups
 ```
 
-Existing files are never deleted: they are moved to
-`~/.local/state/dotfiles/backup/<date>/` before the link is created.
+- Existing files are **never deleted**: they are moved to `~/.local/state/dotfiles/backup/<date>/` first.
+- Since everything is symlinked, editing `~/.config/...` edits the repo: `git status` shows what changed.
+- Post-install hooks: Fisher + Tide for `fish`, `spicetify apply` for `spicetify`, `hyprctl reload` for `hypr`.
 
-Since the files are symlinked, editing `~/.config/...` edits the repo directly:
-a `git status` is enough to see what changed.
+> [!WARNING]
+> Don't `git checkout` an old commit inside `~/Dotfiles`: your live config would change with it.
+> Use `git worktree add /tmp/old <commit>` to look at old versions.
 
 ### Git identity
 
-`config/git/config` contains no personal info: it includes `~/.gitconfig.local`,
-which is not versioned. To create it on a new machine:
+`config/git/config` has no personal info: it includes `~/.gitconfig.local`, which is not versioned.
 
 ```ini
 [user]
 	name = Your Name
-	email = you@example.com
+	email = you@users.noreply.github.com
 	signingkey = <GPG key ID>
 ```
 
@@ -102,12 +132,43 @@ which is not versioned. To create it on a new machine:
 
 ---
 
+## Keybinds
+
+`SUPER` is the main modifier.
+
+| Keys | Action |
+|------|--------|
+| `SUPER + T` | Terminal (kitty) |
+| `SUPER + A` | App launcher (rofi) |
+| `SUPER + B` | Browser (zen) |
+| `SUPER + E` | File manager (thunar) |
+| `SUPER + Q` | Close window |
+| `SUPER + V` | Toggle floating |
+| `SUPER + L` | Lock screen |
+| `SUPER + M` | Exit Hyprland |
+| `SUPER + C` | Color picker |
+| `SUPER + P` | Screenshot area → clipboard |
+| `SUPER + SHIFT + P` | Screenshot area → swappy |
+| `SUPER + CTRL + P` | Screenshot area → `~/Pictures/Screenshots` |
+| `SUPER + SHIFT + W` | Reload waybar |
+| `SUPER + ←↑→↓` | Move focus |
+| `SUPER + SHIFT + ←↑→↓` | Resize window |
+| `SUPER + 1…0` | Go to workspace |
+| `SUPER + SHIFT + 1…0` | Move window to workspace |
+| `SUPER + CTRL + ←/→` | Previous / next workspace |
+| `SUPER + CTRL + SHIFT + ←/→` | Move window to previous / next workspace |
+| `SUPER + S` / `SUPER + SHIFT + S` | Toggle / send to scratchpad |
+| `SUPER + LMB / RMB` | Drag / resize window |
+| 3-finger swipe | Switch workspace |
+
+---
+
 ## TODO
 
 ### **Upcoming Features (hopefully...)**
 - [ ] My own color palette for all applications
-- [ ] Wallpaper switcher 
-- [ ] Custom notification daemon configuration
+- [ ] Wallpaper switcher
+- [x] Custom notification daemon configuration (dunst)
 - [ ] Multiple theme, or anime based theme
 
 ---
@@ -125,5 +186,5 @@ which is not versioned. To create it on a new machine:
 If you like this rice, consider giving it a star!
 
 <p align="center">
-  <img src="https://safebooru.org//images/1921/2c0625090e388c7d27a96452808dcc15a0b0baf1.jpg"/>
+  <img src="assets/support.jpg" width="450"/>
 </p>
