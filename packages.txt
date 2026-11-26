@@ -68,6 +68,8 @@ vesktop-bin
 # --- Theme & fonts (cursor: see README)
 maplemono-nf-cn
 noto-fonts-emoji
+unicode-emoji
+wtype
 catppuccin-gtk-theme-mocha
 adwaita-icon-theme
 nwg-look

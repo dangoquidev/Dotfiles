@@ -20,8 +20,10 @@ hl.bind("SUPER + CTRL + P", exec([[mkdir -p ~/Pictures/Screenshots && grim -g "$
 hl.bind("Print", exec("~/.config/hypr/scripts/screenshot.sh"))
 -- Shift Print — active window → saved file + clipboard
 hl.bind("SHIFT + Print", exec("~/.config/hypr/scripts/screenshot.sh window"))
--- Super Shift V — clipboard history (cliphist)
-hl.bind("SUPER + SHIFT + V", exec([[cliphist list | rofi -dmenu -i -p Clipboard -display-columns 2 -theme ~/.config/rofi/theme.rasi | cliphist decode | wl-copy]]))
+-- Super Shift V — clipboard history with image previews (Quickshell, config/quickshell/shell)
+hl.bind("SUPER + SHIFT + V", exec("quickshell -c shell ipc call clipboard toggle"))
+-- Super . — emoji picker (Quickshell): copies the emoji and types it with wtype
+hl.bind("SUPER + period", exec("quickshell -c shell ipc call emoji toggle"))
 -- Super Space — keyboard: US intl → AZERTY → 中文 pinyin (fcitx5), dunst shows the new one
 hl.bind(key(mainMod, "space"), exec("~/.config/hypr/scripts/keyboard-layout.sh"))
 -- hl.bind(key(mainMod, "J"), hl.dsp.layout("togglesplit"))
@@ -77,8 +79,8 @@ hl.bind("XF86AudioRaiseVolume",  exec("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK
 hl.bind("XF86AudioLowerVolume",  exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      le)
 hl.bind("XF86AudioMute",         exec("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     le)
 hl.bind("XF86AudioMicMute",      exec("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   le)
-hl.bind("XF86MonBrightnessUp",   exec("brightnessctl -e4 -n2 set 5%+"),                  le)
-hl.bind("XF86MonBrightnessDown", exec("brightnessctl -e4 -n2 set 5%-"),                  le)
+hl.bind("XF86MonBrightnessUp",   exec("brightnessctl -e4 -n2 set 5%+; quickshell -c shell ipc call osd brightness"),                  le)
+hl.bind("XF86MonBrightnessDown", exec("brightnessctl -e4 -n2 set 5%-; quickshell -c shell ipc call osd brightness"),                  le)
 
 -- Lid close: logind suspends, hypridle locks first (hypridle.conf)
 
