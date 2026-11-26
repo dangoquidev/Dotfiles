@@ -1,2 +1,6 @@
-backups
+# anciens backups de l'ancien setup.sh (les nouveaux vont dans ~/.local/state/dotfiles)
+backups/
 *.bak
+
+# fichiers temporaires que fish crée à côté de fish_variables
+config/fish/fish_variables?*
