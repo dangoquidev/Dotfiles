@@ -43,3 +43,18 @@ PowerMenuNoAnim = hl.layer_rule({
     no_anim = true,
 })
 PowerMenuNoAnim:set_enabled(false)
+
+hl.window_rule({
+    -- kitty already draws its own translucent background (background_opacity 0.85):
+    -- don't stack Hyprland's 0.85 on top (~0.72 total, and faded text)
+    name    = "kitty-own-opacity",
+    match   = { class = "^kitty$" },
+    opacity = "1.0 override 1.0 override",
+})
+
+hl.window_rule({
+    -- Video, browser, editors and image viewers stay fully opaque
+    name    = "opaque-media-apps",
+    match   = { class = "^(zen|mpv|vlc|imv|swappy|org\\.gnome\\.Loupe|resolve|aseprite|com\\.obsproject\\.Studio)$" },
+    opacity = "1.0 override 1.0 override",
+})
