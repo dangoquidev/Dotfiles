@@ -5,7 +5,7 @@
 #   wallpaper.sh <image>    set this wallpaper
 #   wallpaper.sh --restore  session start: last wallpaper (or the default), lockscreen image if missing,
 #                           carousel previews in the background
-#   wallpaper.sh --previews build missing carousel previews (parallel)
+#   wallpaper.sh --previews build missing carousel previews (parallel), drop those of deleted images
 #
 # The carousel gets a JSON list (path + cached card-sized preview + current index)
 # and calls this script back with the chosen image.
@@ -82,6 +82,17 @@ make_previews() {  # build missing/outdated card-sized previews (center-cropped 
         'vipsthumbnail "$0" -s '"${PREVIEW_W}x${PREVIEW_H}"' --smartcrop centre -o "$1[Q=90,strip]" 2>/dev/null'
 }
 
+prune_previews() {  # prune_previews <image>... : delete previews of images that are gone
+    [[ -d "$THUMBS" && -z "${WALLPAPER_DIRS:-}" ]] || return 0   # never with a test override
+    local f p
+    local -A keep=()
+    for f in "$@"; do keep["$(preview_path "$f")"]=1; done
+    for p in "$THUMBS"/*.jpg; do
+        [[ -e "$p" && -z "${keep[$p]:-}" ]] && rm -f -- "$p"
+    done
+    return 0
+}
+
 json_str() {  # json_str <text> → "escaped"
     local s=${1//\\/\\\\}
     s=${s//\"/\\\"}
@@ -96,6 +107,7 @@ open_carousel() {
     mapfile -t files < <(list_files)
     (( ${#files[@]} )) || { notify-send -a Wallpaper "Wallpaper" "No images in ${DIRS[*]}"; exit 1; }
     make_previews "${files[@]}"   # normally already done at login (--previews)
+    prune_previews "${files[@]}" &
 
     local cur idx=0 list="${XDG_RUNTIME_DIR:-/tmp}/wallpaper-carousel.json"
     cur=$(current)
@@ -126,6 +138,7 @@ case "${1:-}" in
     --previews)
         mapfile -t _files < <(list_files)
         (( ${#_files[@]} )) && make_previews "${_files[@]}"
+        prune_previews "${_files[@]}"
         ;;
     "")
         open_carousel
